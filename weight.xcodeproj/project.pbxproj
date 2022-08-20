@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F008B67728B0B2A600F75D1B /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = F008B67628B0B2A600F75D1B /* SwiftUICharts */; };
 		F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047890F28AE4F8400D18748 /* ResizeablePicker.swift */; };
 		F047891228AE736C00D18748 /* SettingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047891128AE736C00D18748 /* SettingButton.swift */; };
 		F04EBDBF288E99C60097E42F /* weightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDBE288E99C60097E42F /* weightApp.swift */; };
@@ -47,7 +46,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */,
-				F008B67728B0B2A600F75D1B /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,7 +146,6 @@
 			name = weight;
 			packageProductDependencies = (
 				F07FB2E728AE199E007F809C /* HalfASheet */,
-				F008B67628B0B2A600F75D1B /* SwiftUICharts */,
 			);
 			productName = weight;
 			productReference = F04EBDBB288E99C60097E42F /* Weight Tracker.app */;
@@ -180,7 +177,6 @@
 			mainGroup = F04EBDB2288E99C60097E42F;
 			packageReferences = (
 				F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */,
-				F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
 			);
 			productRefGroup = F04EBDBC288E99C60097E42F /* Products */;
 			projectDirPath = "";
@@ -425,14 +421,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/willdale/SwiftUICharts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/franklynw/HalfASheet";
@@ -444,11 +432,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F008B67628B0B2A600F75D1B /* SwiftUICharts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */;
-			productName = SwiftUICharts;
-		};
 		F07FB2E728AE199E007F809C /* HalfASheet */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */;
