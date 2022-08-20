@@ -7,18 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F008B67728B0B2A600F75D1B /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = F008B67628B0B2A600F75D1B /* SwiftUICharts */; };
+		F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047890F28AE4F8400D18748 /* ResizeablePicker.swift */; };
+		F047891228AE736C00D18748 /* SettingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047891128AE736C00D18748 /* SettingButton.swift */; };
 		F04EBDBF288E99C60097E42F /* weightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDBE288E99C60097E42F /* weightApp.swift */; };
 		F04EBDC1288E99C60097E42F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDC0288E99C60097E42F /* ContentView.swift */; };
 		F04EBDC3288E99C70097E42F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F04EBDC2288E99C70097E42F /* Assets.xcassets */; };
 		F04EBDC6288E99C70097E42F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F04EBDC5288E99C70097E42F /* Preview Assets.xcassets */; };
+		F04EBDCE288E9DFC0097E42F /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDCD288E9DFC0097E42F /* HomeView.swift */; };
+		F04EBDD0288E9E030097E42F /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDCF288E9E030097E42F /* HistoryView.swift */; };
+		F04EBDD2288E9E0E0097E42F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDD1288E9E0E0097E42F /* SettingsView.swift */; };
+		F06F615428AD1288009F77D4 /* AdaptiveColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615328AD1288009F77D4 /* AdaptiveColor.swift */; };
+		F06F615628AD215A009F77D4 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615528AD215A009F77D4 /* Utility.swift */; };
+		F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = F07FB2E728AE199E007F809C /* HalfASheet */; };
+		F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0E44AAB28AEA177005F8E93 /* WeightDataModel.xcdatamodeld */; };
+		F0E44AAF28AEA194005F8E93 /* WeightDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E44AAE28AEA194005F8E93 /* WeightDataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F04EBDBB288E99C60097E42F /* weight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = weight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F047890F28AE4F8400D18748 /* ResizeablePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeablePicker.swift; sourceTree = "<group>"; };
+		F047891128AE736C00D18748 /* SettingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingButton.swift; sourceTree = "<group>"; };
+		F04EBDBB288E99C60097E42F /* Weight Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weight Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F04EBDBE288E99C60097E42F /* weightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = weightApp.swift; sourceTree = "<group>"; };
 		F04EBDC0288E99C60097E42F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F04EBDC2288E99C70097E42F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F04EBDC5288E99C70097E42F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F04EBDCD288E9DFC0097E42F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F04EBDCF288E9E030097E42F /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		F04EBDD1288E9E0E0097E42F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F06F615328AD1288009F77D4 /* AdaptiveColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveColor.swift; sourceTree = "<group>"; };
+		F06F615528AD215A009F77D4 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		F0E44AAC28AEA177005F8E93 /* WeightDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeightDataModel.xcdatamodel; sourceTree = "<group>"; };
+		F0E44AAE28AEA194005F8E93 /* WeightDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightDataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,12 +46,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */,
+				F008B67728B0B2A600F75D1B /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F047890E28AE4F7100D18748 /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				F047890F28AE4F8400D18748 /* ResizeablePicker.swift */,
+				F047891128AE736C00D18748 /* SettingButton.swift */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
 		F04EBDB2288E99C60097E42F = {
 			isa = PBXGroup;
 			children = (
@@ -43,7 +74,7 @@
 		F04EBDBC288E99C60097E42F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F04EBDBB288E99C60097E42F /* weight.app */,
+				F04EBDBB288E99C60097E42F /* Weight Tracker.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -51,8 +82,11 @@
 		F04EBDBD288E99C60097E42F /* weight */ = {
 			isa = PBXGroup;
 			children = (
+				F0E44AAA28AEA14E005F8E93 /* DataModel */,
+				F047890E28AE4F7100D18748 /* Component */,
+				F06F615228AD127E009F77D4 /* Utility */,
+				F04EBDCC288E9A060097E42F /* View */,
 				F04EBDBE288E99C60097E42F /* weightApp.swift */,
-				F04EBDC0288E99C60097E42F /* ContentView.swift */,
 				F04EBDC2288E99C70097E42F /* Assets.xcassets */,
 				F04EBDC4288E99C70097E42F /* Preview Content */,
 			);
@@ -65,6 +99,35 @@
 				F04EBDC5288E99C70097E42F /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F04EBDCC288E9A060097E42F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F04EBDC0288E99C60097E42F /* ContentView.swift */,
+				F04EBDCD288E9DFC0097E42F /* HomeView.swift */,
+				F04EBDCF288E9E030097E42F /* HistoryView.swift */,
+				F04EBDD1288E9E0E0097E42F /* SettingsView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F06F615228AD127E009F77D4 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				F06F615328AD1288009F77D4 /* AdaptiveColor.swift */,
+				F06F615528AD215A009F77D4 /* Utility.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		F0E44AAA28AEA14E005F8E93 /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				F0E44AAB28AEA177005F8E93 /* WeightDataModel.xcdatamodeld */,
+				F0E44AAE28AEA194005F8E93 /* WeightDataController.swift */,
+			);
+			path = DataModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,8 +146,12 @@
 			dependencies = (
 			);
 			name = weight;
+			packageProductDependencies = (
+				F07FB2E728AE199E007F809C /* HalfASheet */,
+				F008B67628B0B2A600F75D1B /* SwiftUICharts */,
+			);
 			productName = weight;
-			productReference = F04EBDBB288E99C60097E42F /* weight.app */;
+			productReference = F04EBDBB288E99C60097E42F /* Weight Tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -111,6 +178,10 @@
 				Base,
 			);
 			mainGroup = F04EBDB2288E99C60097E42F;
+			packageReferences = (
+				F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */,
+				F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
+			);
 			productRefGroup = F04EBDBC288E99C60097E42F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,6 +208,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F04EBDD2288E9E0E0097E42F /* SettingsView.swift in Sources */,
+				F04EBDCE288E9DFC0097E42F /* HomeView.swift in Sources */,
+				F06F615628AD215A009F77D4 /* Utility.swift in Sources */,
+				F047891228AE736C00D18748 /* SettingButton.swift in Sources */,
+				F06F615428AD1288009F77D4 /* AdaptiveColor.swift in Sources */,
+				F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */,
+				F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */,
+				F04EBDD0288E9E030097E42F /* HistoryView.swift in Sources */,
+				F0E44AAF28AEA194005F8E93 /* WeightDataController.swift in Sources */,
 				F04EBDC1288E99C60097E42F /* ContentView.swift in Sources */,
 				F04EBDBF288E99C60097E42F /* weightApp.swift in Sources */,
 			);
@@ -275,18 +355,19 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Weight Tracker";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -304,18 +385,19 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Weight Tracker";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -341,6 +423,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/willdale/SwiftUICharts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/franklynw/HalfASheet";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F008B67628B0B2A600F75D1B /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F008B67528B0B2A600F75D1B /* XCRemoteSwiftPackageReference "SwiftUICharts" */;
+			productName = SwiftUICharts;
+		};
+		F07FB2E728AE199E007F809C /* HalfASheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */;
+			productName = HalfASheet;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		F0E44AAB28AEA177005F8E93 /* WeightDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				F0E44AAC28AEA177005F8E93 /* WeightDataModel.xcdatamodel */,
+			);
+			currentVersion = F0E44AAC28AEA177005F8E93 /* WeightDataModel.xcdatamodel */;
+			path = WeightDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = F04EBDB3288E99C60097E42F /* Project object */;
 }

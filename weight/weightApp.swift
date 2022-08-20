@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct weightApp: App {
+    @StateObject private var dataController = WeightDataController()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(\.managedObjectContext, dataController.container.viewContext)
         }
     }
 }
