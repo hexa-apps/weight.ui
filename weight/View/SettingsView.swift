@@ -17,10 +17,11 @@ struct SettingsView: View {
     @AppStorage("birthday") private var birthday: Date = Date()
 
     @State private var goalAlertActive: Bool = false
-//    @AppStorage("goal") private var goal: Int = 90
-//    @AppStorage("goalTail") private var goalTail: Int = 0
     @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
     @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
+    
+    @AppStorage("weightUnit") private var unit: String = "kg"
+    let units = ["kg", "lb"]
 
     var body: some View {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -51,6 +52,13 @@ struct SettingsView: View {
                                         Text("\(goal).\(goalTail)")
                                         Image(systemName: "chevron.right")
                                     }.foregroundColor(.gray)
+                                }
+                            }
+                        }
+                        Section {
+                            Picker("Unit", selection: $unit) {
+                                ForEach(units, id: \.self) {
+                                    Text($0)
                                 }
                             }
                         }
@@ -97,7 +105,7 @@ struct SettingsView: View {
             HalfASheet(isPresented: $goalAlertActive) {
                 GeometryReader { geometry in
                     VStack {
-                        Text("Goal Weight").fontWeight(.bold).padding(.top, 16)
+                        Text("Goal Weight (\(unit)").fontWeight(.bold).padding(.top, 16)
                         HStack(spacing: 0) {
                             ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
                                 goal = newValue

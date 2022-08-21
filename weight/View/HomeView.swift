@@ -12,29 +12,30 @@ struct HomeView: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .reverse)]) var weights: FetchedResults<WeightEntity>
 
     let data: LineChartData = weekOfData(length: 2)
+    @AppStorage("weightUnit") private var unit: String = "kg"
 
     var body: some View {
         NavigationView {
             List {
-                Section {
+                Section("ESSENTIALS") {
                     HStack {
                         VStack {
                             Text("Initial").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f kg", 105.0))
+                            Text(String(format: "%.1f \(unit)", 105.0))
                         }
                         Spacer()
                         Divider()
                         Spacer()
                         VStack {
                             Text("Last").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f kg", 98.3))
+                            Text(String(format: "%.1f \(unit)", 98.3))
                         }
                         Spacer()
                         Divider()
                         Spacer()
                         VStack {
                             Text("Difference").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f kg", 6.7))
+                            Text(String(format: "%.1f \(unit)", 6.7))
                         }
 
                     }.padding()
@@ -51,7 +52,7 @@ struct HomeView: View {
                     }
                 }.listRowBackground(Color.blue)
                 if data.dataSets.dataPoints.count > 0 {
-                    Section {
+                    Section("CHART") {
                         VStack(spacing: 16) {
                             HStack {
                                 Spacer()
