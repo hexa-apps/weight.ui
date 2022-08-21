@@ -8,15 +8,19 @@
 import SwiftUI
 import HalfASheet
 
+// TODO: UserDefaults will be integrated!
+
 struct SettingsView: View {
-    @State private var gender = "Male"
+    @AppStorage("gender") private var gender: String = "Male"
     let genders = ["Male", "Female", "None"]
 
-    @State private var birthday: Date = Date()
+    @AppStorage("birthday") private var birthday: Date = Date()
 
     @State private var goalAlertActive: Bool = false
-    @State var goal: Int = 90
-    @State var goalTail: Int = 0
+//    @AppStorage("goal") private var goal: Int = 90
+//    @AppStorage("goalTail") private var goalTail: Int = 0
+    @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
+    @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
 
     var body: some View {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -32,7 +36,9 @@ struct SettingsView: View {
                             }
                         }
                         Section {
-                            DatePicker("Birthday", selection: $birthday, displayedComponents: .date)
+                            DatePicker("Birthday", selection: $birthday, displayedComponents: .date).onChange(of: birthday) { newValue in
+                                birthday = newValue
+                            }
                         }
                         Section {
                             Button {
@@ -93,8 +99,14 @@ struct SettingsView: View {
                     VStack {
                         Text("Goal Weight").fontWeight(.bold).padding(.top, 16)
                         HStack(spacing: 0) {
-                            ResizeablePicker(selection: $goal, data: Array(0..<770))
-                            ResizeablePicker(selection: $goalTail, data: Array(0..<10))
+                            ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
+                                goal = newValue
+                                UserDefaults.standard.set(goal, forKey: "goal")
+                            }
+                            ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
+                                goalTail = newValue
+                                UserDefaults.standard.set(goalTail, forKey: "goalTail")
+                            }
                         }
                     }
                 }
