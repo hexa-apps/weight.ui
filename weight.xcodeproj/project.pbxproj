@@ -19,6 +19,7 @@
 		F06F615428AD1288009F77D4 /* AdaptiveColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615328AD1288009F77D4 /* AdaptiveColor.swift */; };
 		F06F615628AD215A009F77D4 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615528AD215A009F77D4 /* Utility.swift */; };
 		F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = F07FB2E728AE199E007F809C /* HalfASheet */; };
+		F0D046E628B21760008D0C41 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = F0D046E528B21760008D0C41 /* SwiftUICharts */; };
 		F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0E44AAB28AEA177005F8E93 /* WeightDataModel.xcdatamodeld */; };
 		F0E44AAF28AEA194005F8E93 /* WeightDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E44AAE28AEA194005F8E93 /* WeightDataController.swift */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */,
+				F0D046E628B21760008D0C41 /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +148,7 @@
 			name = weight;
 			packageProductDependencies = (
 				F07FB2E728AE199E007F809C /* HalfASheet */,
+				F0D046E528B21760008D0C41 /* SwiftUICharts */,
 			);
 			productName = weight;
 			productReference = F04EBDBB288E99C60097E42F /* Weight Tracker.app */;
@@ -177,6 +180,7 @@
 			mainGroup = F04EBDB2288E99C60097E42F;
 			packageReferences = (
 				F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */,
+				F0D046E428B21760008D0C41 /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
 			);
 			productRefGroup = F04EBDBC288E99C60097E42F /* Products */;
 			projectDirPath = "";
@@ -429,6 +433,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		F0D046E428B21760008D0C41 /* XCRemoteSwiftPackageReference "SwiftUICharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/willdale/SwiftUICharts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -436,6 +448,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F07FB2E628AE199E007F809C /* XCRemoteSwiftPackageReference "HalfASheet" */;
 			productName = HalfASheet;
+		};
+		F0D046E528B21760008D0C41 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0D046E428B21760008D0C41 /* XCRemoteSwiftPackageReference "SwiftUICharts" */;
+			productName = SwiftUICharts;
 		};
 /* End XCSwiftPackageProductDependency section */
 
