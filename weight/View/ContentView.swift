@@ -8,12 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var manageObjectContext
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
+
     var body: some View {
         TabView {
-            HomeView().tabItem {
+            HomeView(weights: weights).tabItem {
                 Label("", systemImage: "house")
             }
-            HistoryView().tabItem {
+            HistoryView(weights: weights).tabItem {
                 Label("", systemImage: "list.dash")
             }
             SettingsView().tabItem {

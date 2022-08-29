@@ -8,14 +8,13 @@
 import SwiftUI
 import HalfASheet
 
-// TODO: UserDefaults will be integrated!
-
 struct SettingsView: View {
-    @AppStorage("gender") private var gender: String = "Male"
-    let genders = ["Male", "Female", "None"]
-
+    @Environment(\.managedObjectContext) var manageObjectContext
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
+    
     @AppStorage("birthday") private var birthday: Date = Date()
 
+    @State private var clearAlert: Bool = false
     @State private var goalAlertActive: Bool = false
     @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
     @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
@@ -30,14 +29,7 @@ struct SettingsView: View {
                 List {
                     Section("PROFILE") {
                         Section {
-                            Picker("Gender", selection: $gender) {
-                                ForEach(genders, id: \.self) {
-                                    Text($0)
-                                }
-                            }
-                        }
-                        Section {
-                            DatePicker("Birthday", selection: $birthday, displayedComponents: .date).onChange(of: birthday) { newValue in
+                            DatePicker("Birthday", selection: $birthday, in: ...Date(), displayedComponents: .date).onChange(of: birthday) { newValue in
                                 birthday = newValue
                             }
                         }
@@ -67,34 +59,49 @@ struct SettingsView: View {
                         Section {
                             SettingButton(title: "Reminder", imageSystemName: "deskclock.fill") {
                                 print("Reminder")
-                            }.foregroundColor(light: .black, dark: .white)
+                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "Remove", imageSystemName: "trash.fill") {
-                                print("Remove")
-                            }.foregroundColor(.red)
+                            SettingButton(title: "Clear History", imageSystemName: "trash.fill") {
+                                clearAlert.toggle()
+                            }
+                                .foregroundColor(.red)
+                                .alert(isPresented: $clearAlert) {
+                                    Alert(
+                                        title: Text("Clear All Data"),
+                                        message: Text("Are you sure?"),
+                                        primaryButton: .destructive(Text("Clear")) {
+                                            for weight in weights {
+                                                manageObjectContext.delete(weight)
+                                            }
+                                            if manageObjectContext.hasChanges {
+                                                try? manageObjectContext.save()
+                                            }
+                                        },
+                                        secondaryButton: .cancel(Text("Cancel")))
+                                }
                         }
                     }
                     Section("ABOUT") {
                         Section {
                             SettingButton(title: "Suggestions", imageSystemName: "envelope.fill") {
                                 print("Suggestions")
-                            }.foregroundColor(light: .black, dark: .white)
+                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
                             SettingButton(title: "Share With Friends", imageSystemName: "square.and.arrow.up.fill") {
                                 print("Share with friends")
-                            }.foregroundColor(light: .black, dark: .white)
+                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
                             SettingButton(title: "Rate/Comment", imageSystemName: "star.fill") {
                                 print("Rate/Comment")
-                            }.foregroundColor(light: .black, dark: .white)
+                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
                             SettingButton(title: "Other Apps", imageSystemName: "rectangle.3.offgrid.fill") {
                                 print("Other Apps")
-                            }.foregroundColor(light: .black, dark: .white)
+                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                     }
                     Section {
@@ -105,7 +112,7 @@ struct SettingsView: View {
             HalfASheet(isPresented: $goalAlertActive) {
                 GeometryReader { geometry in
                     VStack {
-                        Text("Goal Weight (\(unit)").fontWeight(.bold).padding(.top, 16)
+                        Text("Goal Weight (\(unit))").fontWeight(.bold).padding(.top, 16)
                         HStack(spacing: 0) {
                             ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
                                 goal = newValue

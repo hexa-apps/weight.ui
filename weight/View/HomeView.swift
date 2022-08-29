@@ -7,42 +7,55 @@
 
 import SwiftUI
 import SwiftUICharts
+import HalfASheet
 
 struct HomeView: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .reverse)]) var weights: FetchedResults<WeightEntity>
+    @Environment(\.managedObjectContext) var managedObjectContext
 
-    let data: LineChartData = weekOfData(length: 2)
+    let weights: FetchedResults<WeightEntity>
+
     @AppStorage("weightUnit") private var unit: String = "kg"
+    @AppStorage("isOnboardingView") private var onboardingViewShow = true
+
+    @State private var isSheetActive: Bool = false
+    @State private var isAddAlertActive: Bool = false
+    @State private var lastWeight: Int = 0
+    @State private var lastWeightTail: Int = 0
+
+    @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
+    @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
+
+    @State private var date = Date()
 
     var body: some View {
         NavigationView {
             List {
-                Section("ESSENTIALS") {
-                    HStack {
-                        VStack {
-                            Text("Initial").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f \(unit)", 105.0))
-                        }
-                        Spacer()
-                        Divider()
-                        Spacer()
-                        VStack {
-                            Text("Last").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f \(unit)", 98.3))
-                        }
-                        Spacer()
-                        Divider()
-                        Spacer()
-                        VStack {
-                            Text("Difference").font(.callout).fontWeight(.bold)
-                            Text(String(format: "%.1f \(unit)", 6.7))
-                        }
+//                Section("ESSENTIALS") {
+                HStack {
+                    VStack {
+                        Text("Initial").font(.callout).fontWeight(.bold)
+                        Text(String(format: "%.1f \(unit)", weights.first?.weight ?? 0)).fontWeight(.light).font(.title3)
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    VStack {
+                        Text("Last").font(.callout).fontWeight(.bold)
+                        Text(String(format: "%.1f \(unit)", weights.last?.weight ?? 0)).fontWeight(.light).font(.title3)
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    VStack {
+                        Text("Difference").font(.callout).fontWeight(.bold)
+                        Text(String(format: "%.1f \(unit)", (weights.last?.weight ?? 0) - (weights.first?.weight ?? 0))).fontWeight(.light).font(.title3)
+                    }
 
-                    }.padding()
-                }
+                }.padding()
+//                }
                 Section {
                     Button {
-                        print("add weight")
+                        isSheetActive.toggle()
                     } label: {
                         HStack {
                             Text("Add current weight")
@@ -51,85 +64,142 @@ struct HomeView: View {
                         }.padding().foregroundColor(.white)
                     }
                 }.listRowBackground(Color.blue)
-                if data.dataSets.dataPoints.count > 0 {
+                if weights.count > 0 {
                     Section("CHART") {
                         VStack(spacing: 16) {
                             HStack {
                                 Spacer()
                                 Image(systemName: "square.fill").foregroundColor(.green)
-                                Text("Mean")
+                                Text("Mean").fontWeight(.light)
                                 Image(systemName: "square.fill").foregroundColor(.red)
-                                Text("Goal")
+                                Text("Goal").fontWeight(.light)
                                 Image(systemName: "square.fill").foregroundColor(.blue)
-                                Text("Weight")
+                                Text("Weight").fontWeight(.light)
                                 Spacer()
-                            }.padding(.top, 16)
-                            if data.dataSets.dataPoints.count == 1 {
-                                Text("1")
-                            } else {
-                                LineChart(chartData: data)
-                                //                                .extraLine(chartData: data,
-                                //                                           legendTitle: "Test",
-                                //                                           datapoints: extraLineData,
-                                //                                           style: extraLineStyle)
-                                .pointMarkers(chartData: data)
-                                    .touchOverlay(chartData: data,
-                                    formatter: numberFormatter)
-                                    .yAxisPOI(chartData: data,
-                                    markerName: "",
-                                    markerValue: 90,
-                                    //                                      labelColour: .red,
-                                    lineColour: .red,
-                                    strokeStyle: StrokeStyle(lineWidth: 3, dash: [5, 10]))
-                                //                                .yAxisPOI(chartData: data,
-                                //                                          markerName: "Step Count Aim",
-                                //                                          markerValue: 15_000,
-                                //                                          labelPosition: .center(specifier: "%.0f",
-                                //                                                                 formatter: numberFormatter),
-                                //                                          labelColour: Color.black,
-                                //                                          labelBackground: Color(red: 1.0, green: 0.75, blue: 0.25),
-                                //                                          lineColour: Color(red: 1.0, green: 0.75, blue: 0.25),
-                                //                                          strokeStyle: StrokeStyle(lineWidth: 3, dash: [5,10]))
-                                //                                .yAxisPOI(chartData: data,
-                                //                                          markerName: "Minimum Recommended",
-                                //                                          markerValue: 10_000,
-                                //                                          labelPosition: .center(specifier: "%.0f",
-                                //                                                                 formatter: numberFormatter),
-                                //                                          labelColour: Color.white,
-                                //                                          labelBackground: Color(red: 0.25, green: 0.75, blue: 1.0),
-                                //                                          lineColour: Color(red: 0.25, green: 0.75, blue: 1.0),
-                                //                                          strokeStyle: StrokeStyle(lineWidth: 3, dash: [5,10]))
-                                //                                .xAxisPOI(chartData: data,
-                                //                                          markerName: "Worst",
-                                //                                          markerValue: 2,
-                                //                                          dataPointCount: data.dataSets.dataPoints.count,
-                                //                                          lineColour: .red)
-                                .averageLine(chartData: data,
-                                    labelPosition: .yAxis(specifier: "",
-                                        formatter: numberFormatter),
-                                    lineColour: .green,
-                                    strokeStyle: StrokeStyle(lineWidth: 3, dash: [5, 10]))
-                                    .xAxisGrid(chartData: data)
-                                    .yAxisGrid(chartData: data)
-                                    .xAxisLabels(chartData: data)
-                                    .yAxisLabels(chartData: data,
-                                    formatter: numberFormatter,
-                                    colourIndicator: .style(size: 12))
-                                //                                .extraYAxisLabels(chartData: data, colourIndicator: .style(size: 12))
-                                .infoBox(chartData: data, height: 1)
-                                    .headerBox(chartData: data)
-                                //                                .legends(chartData: data, columns: [GridItem(.flexible()), GridItem(.flexible())])
-                                .id(data.id)
-                                    .frame(minWidth: 150, maxWidth: 900, minHeight: 150, idealHeight: 500, maxHeight: 600, alignment: .center)
-                                    .padding(.horizontal)
                             }
-
+                                .font(.callout)
+                                .padding(.top, 16)
+                            let data = parseWeights(weights: weights)
+                            LineChart(chartData: data)
+                                .pointMarkers(chartData: data)
+                                .touchOverlay(chartData: data,
+                                formatter: numberFormatter)
+                                .yAxisPOI(chartData: data,
+                                markerName: "",
+                                markerValue: Double(goal) + (Double(goalTail) * 0.1),
+                                lineColour: .red,
+                                strokeStyle: StrokeStyle(lineWidth: 3, dash: [5, 10]))
+                                .averageLine(chartData: data,
+                                labelPosition: .yAxis(specifier: "",
+                                    formatter: numberFormatter),
+                                lineColour: .green,
+                                strokeStyle: StrokeStyle(lineWidth: 3, dash: [5, 10]))
+                                .xAxisGrid(chartData: data)
+                                .yAxisGrid(chartData: data)
+                                .xAxisLabels(chartData: data)
+                                .yAxisLabels(chartData: data,
+                                formatter: numberFormatter,
+                                colourIndicator: .style(size: 12))
+                                .infoBox(chartData: data, height: 1)
+                                .headerBox(chartData: data)
+                                .id(data.id)
+                                .frame(minWidth: 150, maxWidth: 900, minHeight: 150, idealHeight: 500, maxHeight: 600, alignment: .center)
+                                .padding(.horizontal)
                         }
-
                     }
                 }
 
-            }.navigationTitle("Summary")
+            }
+                .navigationTitle("Summary")
+
+        }
+            .onAppear {
+            if let lastWeightDouble = weights.last {
+                lastWeight = Int(lastWeightDouble.weight)
+                lastWeightTail = Int((lastWeightDouble.weight - Double(lastWeight)) * 10.0)
+            }
+        }
+            .sheet(isPresented: $isSheetActive) {
+            ZStack {
+                VStack {
+                    Section() {
+                        DatePicker("Date", selection: $date, in: ...Date(), displayedComponents: .date).onChange(of: date) { newValue in
+                            date = newValue
+                        }
+                    }
+                        .padding()
+                        .background(light: Color(0xFF000000).opacity(0.05), dark: Color(0xFF000000).opacity(0.25))
+                        .cornerRadius(8)
+                        .padding()
+                    Section() {
+                        Button {
+                            isAddAlertActive.toggle()
+                        } label: {
+                            HStack {
+                                Text("Weight").foregroundColor(light: .black, dark: .white)
+                                Spacer()
+                                HStack {
+                                    Text("\(lastWeight).\(lastWeightTail) \(unit)")
+                                    Image(systemName: "chevron.right")
+                                }.foregroundColor(.gray)
+                            }
+                        }
+                    }
+                        .padding()
+                        .background(light: Color(0xFF000000).opacity(0.05), dark: Color(0xFF000000).opacity(0.25))
+                        .cornerRadius(8)
+                        .padding()
+                    HStack {
+                        Button {
+                            let weight = Double(lastWeight) + (Double(lastWeightTail) * 0.1)
+                            WeightDataController().startAddingWeightProcess(weight: weight, when: date, weights: weights, context: managedObjectContext)
+                            isSheetActive.toggle()
+                        } label: {
+                            Text("Save")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(Color.green)
+                                .font(.title3)
+                        }.cornerRadius(16)
+                        Spacer()
+                        Button {
+                            isSheetActive.toggle()
+                        } label: {
+                            Text("Cancel")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(.red)
+                                .font(.title3)
+                        }.cornerRadius(16)
+                    }.padding()
+                    Spacer()
+                }.onAppear {
+                    date = Date()
+                }
+                HalfASheet(isPresented: $isAddAlertActive) {
+                    GeometryReader { geometry in
+                        VStack {
+                            Text("Current Weight (\(unit))").fontWeight(.bold).padding(.top, 16)
+                            HStack(spacing: 0) {
+                                ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
+                                    lastWeight = newValue
+                                }
+                                ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
+                                    lastWeightTail = newValue
+                                }
+                            }
+                        }
+                    }
+                }
+                    .disableDragToDismiss
+            }
+
+
+        }
+            .fullScreenCover(isPresented: $onboardingViewShow) {
+            OnboardingView(onboardingShow: $onboardingViewShow)
         }
     }
 
@@ -140,103 +210,5 @@ struct HomeView: View {
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter
-    }
-
-//        private var extraLineData: [ExtraLineDataPoint] {
-//            [ExtraLineDataPoint(value: 8000),
-//             ExtraLineDataPoint(value: 10000),
-//             ExtraLineDataPoint(value: 15000),
-//             ExtraLineDataPoint(value: 9000)]
-//        }
-//        private var extraLineStyle: ExtraLineStyle {
-//            ExtraLineStyle(lineColour: ColourStyle(colour: .blue),
-//                           lineType: .line,
-//                           yAxisTitle: "Another Axis")
-//        }
-
-    static func weekOfData(length: Int) -> LineChartData {
-        let dataPointsSource: [LineChartDataPoint] = [
-            LineChartDataPoint(value: 98.1, xAxisLabel: "M", description: "Monday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 99.3, xAxisLabel: "T", description: "Tuesday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 99.4, xAxisLabel: "W", description: "Wednesday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 97.7, xAxisLabel: "T", description: "Thursday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 98.1, xAxisLabel: "F", description: "Friday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 97.8, xAxisLabel: "S", description: "Saturday", pointColour: PointColour(border: .blue, fill: .blue)),
-            LineChartDataPoint(value: 97.7, xAxisLabel: "S", description: "Sunday", pointColour: PointColour(border: .blue, fill: .blue)),
-        ]
-        var dataPoints: [LineChartDataPoint] = []
-        if length == 1 {
-            dataPoints.append(dataPointsSource[0])
-            dataPoints.append(dataPointsSource[0])
-        } else if length > 1 {
-            dataPoints = dataPointsSource
-        }
-        let data: LineDataSet = LineDataSet(dataPoints: dataPoints,
-            legendTitle: "Steps",
-            pointStyle: PointStyle(fillColour: .blue, pointType: .filled),
-            style: LineStyle(lineColour: ColourStyle(colour: .blue), lineType: .curvedLine))
-
-        let gridStyle = GridStyle(numberOfLines: 5,
-            lineColour: Color(.lightGray).opacity(0.5),
-            lineWidth: 1,
-            dash: [8],
-            dashPhase: 0)
-
-        let chartStyle = LineChartStyle(infoBoxPlacement: .infoBox(isStatic: false),
-            infoBoxContentAlignment: .horizontal,
-            infoBoxBorderColour: Color.primary,
-            infoBoxBorderStyle: StrokeStyle(lineWidth: 1),
-
-            markerType: .vertical(attachment: .line(dot: .style(DotStyle(fillColour: .white, lineColour: .blue)))),
-
-            xAxisGridStyle: gridStyle,
-            xAxisLabelPosition: .bottom,
-            xAxisLabelColour: Color.primary,
-            xAxisLabelsFrom: .dataPoint(rotation: .degrees(0)),
-//                                            xAxisTitle          : "xAxisTitle",
-
-            yAxisGridStyle: gridStyle,
-            yAxisLabelPosition: .leading,
-            yAxisLabelColour: Color.primary,
-            yAxisNumberOfLabels: 5,
-
-            baseline: .minimumWithMaximum(of: 85),
-            topLine: .maximum(of: data.maxValue() + 5),
-
-            globalAnimation: .easeOut(duration: 1))
-
-
-
-        let chartData = LineChartData(dataSets: data,
-//                                          metadata       : ChartMetadata(title: "Step Count", subtitle: "Over a Week"),
-            chartStyle: chartStyle)
-
-        defer {
-            chartData.touchedDataPointPublisher
-                .map(\.value)
-                .sink { value in
-                var dotStyle: DotStyle
-                if value < 90 {
-                    dotStyle = DotStyle(fillColour: .red)
-                } else if value >= 90 && value <= 105 {
-                    dotStyle = DotStyle(fillColour: .blue)
-                } else {
-                    dotStyle = DotStyle(fillColour: .green)
-                }
-                withAnimation(.linear(duration: 0.5)) {
-                    chartData.chartStyle.markerType = .vertical(attachment: .line(dot: .style(dotStyle)))
-                }
-            }
-                .store(in: &chartData.subscription)
-        }
-
-        return chartData
-
-    }
-}
-
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
     }
 }
