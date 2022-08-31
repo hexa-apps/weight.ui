@@ -11,14 +11,16 @@ import HalfASheet
 struct SettingsView: View {
     @Environment(\.managedObjectContext) var manageObjectContext
     @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
-    
+
     @AppStorage("birthday") private var birthday: Date = Date()
 
     @State private var clearAlert: Bool = false
     @State private var goalAlertActive: Bool = false
+    @State private var informativeAlert: Bool = false
+    @State private var reminderSheet: Bool = false
     @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
     @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
-    
+
     @AppStorage("weightUnit") private var unit: String = "kg"
     let units = ["kg", "lb"]
 
@@ -58,8 +60,48 @@ struct SettingsView: View {
                     Section("SETTINGS") {
                         Section {
                             SettingButton(title: "Reminder", imageSystemName: "deskclock.fill") {
-                                print("Reminder")
-                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
+                                let center = UNUserNotificationCenter.current()
+                                center.getNotificationSettings { settings in
+                                    switch settings.authorizationStatus {
+                                    case .authorized:
+                                        // TODO: Open reminder sheet
+                                        reminderSheet.toggle()
+                                    case .denied:
+                                        // TODO: Open informative alert
+                                        informativeAlert.toggle()
+                                    case .ephemeral:
+                                        print("Some permissions")
+                                    case .notDetermined:
+                                        center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                            if success {
+                                                // TODO: Open reminder sheet
+                                                reminderSheet.toggle()
+                                            } else {
+                                                // TODO: Open informative alert
+                                                informativeAlert.toggle()
+                                            }
+                                        }
+                                    case .provisional:
+                                        print("Don't know")
+                                    default:
+                                        print("New case")
+                                    }
+                                }
+                            }
+                                .foregroundColor(light: .black.opacity(0.75), dark: .white)
+                                .sheet(isPresented: $reminderSheet) {
+                                    Text("There will be reminder")
+                            }
+                                .alert(isPresented: $informativeAlert) {
+                                Alert(
+                                    title: Text("Notification Permission"),
+                                    message: Text("You need to give permission to use the reminder."),
+                                    primaryButton: .default(Text("Go to settings")) {
+                                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                    },
+                                    secondaryButton: .cancel(Text("Cancel")))
+                            }
                         }
                         Section {
                             SettingButton(title: "Clear History", imageSystemName: "trash.fill") {
@@ -67,19 +109,19 @@ struct SettingsView: View {
                             }
                                 .foregroundColor(.red)
                                 .alert(isPresented: $clearAlert) {
-                                    Alert(
-                                        title: Text("Clear All Data"),
-                                        message: Text("Are you sure?"),
-                                        primaryButton: .destructive(Text("Clear")) {
-                                            for weight in weights {
-                                                manageObjectContext.delete(weight)
-                                            }
-                                            if manageObjectContext.hasChanges {
-                                                try? manageObjectContext.save()
-                                            }
-                                        },
-                                        secondaryButton: .cancel(Text("Cancel")))
-                                }
+                                Alert(
+                                    title: Text("Clear All Data"),
+                                    message: Text("Are you sure?"),
+                                    primaryButton: .destructive(Text("Clear")) {
+                                        for weight in weights {
+                                            manageObjectContext.delete(weight)
+                                        }
+                                        if manageObjectContext.hasChanges {
+                                            try? manageObjectContext.save()
+                                        }
+                                    },
+                                    secondaryButton: .cancel(Text("Cancel")))
+                            }
                         }
                     }
                     Section("ABOUT") {

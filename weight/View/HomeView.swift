@@ -16,21 +16,22 @@ struct HomeView: View {
 
     @AppStorage("weightUnit") private var unit: String = "kg"
     @AppStorage("isOnboardingView") private var onboardingViewShow = true
+    @AppStorage("goal") private var goal: Int = 40
+    @AppStorage("goalTail") private var goalTail: Int = 0
 
     @State private var isSheetActive: Bool = false
     @State private var isAddAlertActive: Bool = false
     @State private var lastWeight: Int = 40
     @State private var lastWeightTail: Int = 0
 
-    @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
-    @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
+//    @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
+//    @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
 
     @State private var date = Date()
 
     var body: some View {
         NavigationView {
             List {
-//                Section("ESSENTIALS") {
                 HStack {
                     VStack {
                         Text("Initial").font(.callout).fontWeight(.bold)
@@ -54,7 +55,6 @@ struct HomeView: View {
                     }
 
                 }.padding()
-//                }
                 Section {
                     Button {
                         isSheetActive.toggle()
