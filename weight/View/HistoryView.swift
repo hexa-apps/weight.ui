@@ -17,7 +17,7 @@ struct HistoryView: View {
     
     @State private var isAddAlertActive: Bool = false
     @State private var isSheetActive: Bool = false
-    @State private var lastWeight: Int = 0
+    @State private var lastWeight: Int = 40
     @State private var lastWeightTail: Int = 0
     @State private var date = Date()
 

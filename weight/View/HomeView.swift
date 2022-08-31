@@ -19,7 +19,7 @@ struct HomeView: View {
 
     @State private var isSheetActive: Bool = false
     @State private var isAddAlertActive: Bool = false
-    @State private var lastWeight: Int = 0
+    @State private var lastWeight: Int = 40
     @State private var lastWeightTail: Int = 0
 
     @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")

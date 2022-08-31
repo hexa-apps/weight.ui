@@ -14,11 +14,11 @@ struct OnboardingView: View {
     @AppStorage("weightUnit") private var unit: String = "kg"
     let units = ["kg", "lb"]
 
-    @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
-    @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
+    @State private var goal: Int = 40
+    @State private var goalTail: Int = 0
     
-    @State private var current: Int = UserDefaults.standard.integer(forKey: "current")
-    @State private var currentTail: Int = UserDefaults.standard.integer(forKey: "currentTail")
+    @State private var current: Int = 40
+    @State private var currentTail: Int = 0
     
     @Environment(\.managedObjectContext) var managedObjectContext
 
