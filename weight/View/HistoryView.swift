@@ -27,9 +27,19 @@ struct HistoryView: View {
                 List {
                     if weights.count > 0 {
                         let parsedWeights = parseWeightsForHistory(weights: weights)
-                        ForEach(parsedWeights, id: \.self) {
-                            HistoryCard(weight: $0.weight, date: $0.date, icon: $0.icon, color: $0.color, unit: unit)
-                                .padding(.all, 4)
+                        ForEach(parsedWeights, id: \.self) { weight in
+                            Button {
+                                lastWeight = Int(weight.weight)
+                                lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "dd.MM.yyyy"
+                                date = dateFormatter.date(from: weight.date) ?? Date()
+                                isSheetActive.toggle()
+                            } label: {
+                                HistoryCard(weight: weight, unit: unit)
+                                    .padding(.all, 4)
+                            }
+                            
                         }
                     } else {
                         Text("No data")
@@ -49,7 +59,11 @@ struct HistoryView: View {
         }.sheet(isPresented: $isSheetActive) {
             ZStack {
                 VStack {
-                    Section() {
+                    Section {
+                        Text("Add/Update Weight").font(.title2).fontWeight(.bold)
+                    }
+                        .padding(.top, 32)
+                    Section {
                         DatePicker("Date", selection: $date, in: ...Date(), displayedComponents: .date).onChange(of: date) { newValue in
                             date = newValue
                         }
@@ -58,7 +72,7 @@ struct HistoryView: View {
                         .background(light: Color(0xFF000000).opacity(0.05), dark: Color(0xFF000000).opacity(0.25))
                         .cornerRadius(8)
                         .padding()
-                    Section() {
+                    Section {
                         Button {
                             isAddAlertActive.toggle()
                         } label: {
@@ -103,7 +117,7 @@ struct HistoryView: View {
                     }.padding()
                     Spacer()
                 }.onAppear {
-                    date = Date()
+                    date = date
                 }
                 HalfASheet(isPresented: $isAddAlertActive) {
                     GeometryReader { geometry in

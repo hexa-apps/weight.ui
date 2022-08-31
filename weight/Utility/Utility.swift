@@ -52,7 +52,7 @@ func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryMo
         let weightValue = weight.weight
         let stringDate = formattedDate(date: weight.time, withYear: true)
         if index == reversed.count - 1 {
-            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "star.circle.fill", color: Color(0xFF2F68FF)))
+            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "flag.circle.fill", color: Color(0xFF2F68FF)))
         } else if weight.weight == weightValues[index + 1] {
             result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "minus.circle.fill", color: .gray))
         } else if weight.weight > weightValues[index + 1] {

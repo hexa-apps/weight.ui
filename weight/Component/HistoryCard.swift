@@ -8,22 +8,19 @@
 import SwiftUI
 
 struct HistoryCard: View {
-    let weight: Double
-    let date: String
-    let icon: String
-    let color: Color
+    let weight: HistoryModel
     let unit: String
 
     var body: some View {
         HStack {
-            Image(systemName: icon)
+            Image(systemName: weight.icon)
                 .resizable()
                 .frame(width: 36, height: 36)
-                .foregroundColor(color)
+                .foregroundColor(weight.color)
                 .padding(.trailing, 8)
             VStack(alignment: .leading, spacing: 2) {
-                Text(String(format: "%.2f", weight) + " \(unit)").font(.system(size: 20))
-                Text(date).font(.system(size: 16)).fontWeight(.light)
+                Text(String(format: "%.2f", weight.weight) + " \(unit)").font(.system(size: 20))
+                Text(weight.date).font(.system(size: 16)).fontWeight(.light)
             }
             Spacer()
             Image(systemName: "chevron.right")

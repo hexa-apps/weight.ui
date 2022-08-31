@@ -60,7 +60,7 @@ struct HomeView: View {
                         isSheetActive.toggle()
                     } label: {
                         HStack {
-                            Text("Add current weight")
+                            Text("Add weight")
                             Spacer()
                             Image(systemName: "plus")
                         }.padding().foregroundColor(.white)
@@ -124,7 +124,11 @@ struct HomeView: View {
             .sheet(isPresented: $isSheetActive) {
             ZStack {
                 VStack {
-                    Section() {
+                    Section {
+                        Text("Add Weight").font(.title2).fontWeight(.bold)
+                    }
+                        .padding(.top, 32)
+                    Section {
                         DatePicker("Date", selection: $date, in: ...Date(), displayedComponents: .date).onChange(of: date) { newValue in
                             date = newValue
                         }
@@ -133,7 +137,7 @@ struct HomeView: View {
                         .background(light: Color(0xFF000000).opacity(0.05), dark: Color(0xFF000000).opacity(0.25))
                         .cornerRadius(8)
                         .padding()
-                    Section() {
+                    Section {
                         Button {
                             isAddAlertActive.toggle()
                         } label: {
