@@ -48,7 +48,9 @@ struct HomeView: View {
                     Spacer()
                     VStack {
                         Text("Difference").font(.callout).fontWeight(.bold)
-                        Text(String(format: "%.1f \(unit)", (weights.last?.weight ?? 0) - (weights.first?.weight ?? 0))).fontWeight(.light).font(.title3)
+                        let difference = (weights.last?.weight ?? 0) - (weights.first?.weight ?? 0)
+                        let color: Color = difference == 0 ? .black : difference < 0 ? .green : .red
+                        Text(String(format: "%.1f \(unit)", difference)).fontWeight(.light).font(.title3).foregroundColor(color)
                     }
 
                 }.padding()
@@ -103,7 +105,7 @@ struct HomeView: View {
                                 .infoBox(chartData: data, height: 1)
                                 .headerBox(chartData: data)
                                 .id(data.id)
-                                .frame(minWidth: 150, maxWidth: 900, minHeight: 150, idealHeight: 500, maxHeight: 600, alignment: .center)
+                                .frame(minWidth: 150, maxWidth: 900, minHeight: 150, idealHeight: 300, maxHeight: 600, alignment: .center)
                                 .padding(.horizontal)
                         }
                     }
