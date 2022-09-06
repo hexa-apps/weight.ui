@@ -16,11 +16,11 @@ struct HistoryCard: View {
             Image(systemName: weight.icon)
                 .resizable()
                 .frame(width: 36, height: 36)
-                .foregroundColor(weight.color)
+                .foregroundColor(light: weight.lightColor, dark: weight.darkColor)
                 .padding(.trailing, 8)
             VStack(alignment: .leading, spacing: 2) {
-                Text(String(format: "%.2f", weight.weight) + " \(unit)").font(.system(size: 20))
-                Text(weight.date).font(.system(size: 16)).fontWeight(.light)
+                Text(String(format: "%.1f", weight.weight) + " \(unit)").font(.system(size: 20))
+                Text(weight.date).font(.system(size: 16, weight: .light).italic())
             }
             Spacer()
             Image(systemName: "chevron.right")

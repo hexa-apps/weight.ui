@@ -50,8 +50,8 @@ struct HomeView: View {
                     VStack {
                         Text("Difference").font(.callout).fontWeight(.bold)
                         let difference = (weights.last?.weight ?? 0) - (weights.first?.weight ?? 0)
-                        let color: Color = difference == 0 ? .black : difference < 0 ? .green : .red
-                        Text(String(format: "%.1f \(unit)", difference)).fontWeight(.light).font(.title3).foregroundColor(color)
+                        let color: Color = difference == 0 ? Color.primary : difference < 0 ? .green : .red
+                        Text(String(format: "%.1f \(unit)", difference)).fontWeight(.bold).font(.title3).foregroundColor(color)
                     }
 
                 }.padding()
@@ -65,7 +65,7 @@ struct HomeView: View {
                             Image(systemName: "plus")
                         }.padding().foregroundColor(.white)
                     }
-                }.listRowBackground(Color.blue)
+                }.listRowBackground(Color(0xFF3E2AD1))
                 if weights.count > 0 {
                     Section("CHART") {
                         VStack(spacing: 16) {

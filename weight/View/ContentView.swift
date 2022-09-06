@@ -10,19 +10,20 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.managedObjectContext) var manageObjectContext
     @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
-
+    
     var body: some View {
         TabView {
             HomeView(weights: weights).tabItem {
-                Label("", systemImage: "house")
+                Label("", systemImage: "house").foregroundColor(Color(0xFF3E2AD1))
             }
             HistoryView(weights: weights).tabItem {
-                Label("", systemImage: "list.dash")
+                Label("", systemImage: "calendar")
             }
             SettingsView().tabItem {
                 Label("", systemImage: "gearshape")
             }
         }
+        .accentColor(light: Color(0xFF3E2AD1), dark: Color(0xFF6753F4))
     }
 }
 

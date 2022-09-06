@@ -11,5 +11,6 @@ struct HistoryModel: Hashable {
     var weight: Double
     var date: String
     var icon: String
-    var color: Color
+    var lightColor: Color
+    var darkColor: Color
 }

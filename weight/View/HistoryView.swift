@@ -51,6 +51,7 @@ struct HistoryView: View {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
                         .frame(width: 48, height: 48)
+                        .foregroundColor(light: Color(0xFF3E2AD1), dark: Color(0xFF6753F4))
                         .padding(.bottom, 36)
                         .padding(.trailing, 36)
                 }
