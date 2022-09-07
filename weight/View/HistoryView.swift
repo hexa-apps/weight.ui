@@ -135,7 +135,18 @@ struct HistoryView: View {
                         }
                     }
                 }
-                    .disableDragToDismiss
+                .disableDragToDismiss
+                .onAppear {
+                    if let weight = weights.last {
+                        lastWeight =  Int(weight.weight)
+                        lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
+                    } else {
+                        lastWeight =  UserDefaults.standard.integer(forKey: "goal")
+                        lastWeightTail = UserDefaults.standard.integer(forKey: "goalTail")
+                    }
+                    
+                }
+                    
             }
         }
     }
