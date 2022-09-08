@@ -13,7 +13,7 @@ struct weightApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView().environment(\.managedObjectContext, dataController.container.viewContext)
+            SplashView().environment(\.managedObjectContext, dataController.container.viewContext)
         }
     }
 }

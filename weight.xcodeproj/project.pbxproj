@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F042C3C728B4F5B50056D722 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F042C3C628B4F5B50056D722 /* OnboardingView.swift */; };
+		F0473C3E28C9A26300C81821 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0473C3D28C9A26300C81821 /* SplashView.swift */; };
 		F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047890F28AE4F8400D18748 /* ResizeablePicker.swift */; };
 		F047891228AE736C00D18748 /* SettingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047891128AE736C00D18748 /* SettingButton.swift */; };
 		F04EBDBF288E99C60097E42F /* weightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04EBDBE288E99C60097E42F /* weightApp.swift */; };
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		F042C3C628B4F5B50056D722 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		F0473C3D28C9A26300C81821 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		F047890F28AE4F8400D18748 /* ResizeablePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeablePicker.swift; sourceTree = "<group>"; };
 		F047891128AE736C00D18748 /* SettingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingButton.swift; sourceTree = "<group>"; };
 		F04EBDBB288E99C60097E42F /* Weight Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weight Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 				F04EBDCD288E9DFC0097E42F /* HomeView.swift */,
 				F04EBDCF288E9E030097E42F /* HistoryView.swift */,
 				F04EBDD1288E9E0E0097E42F /* SettingsView.swift */,
+				F0473C3D28C9A26300C81821 /* SplashView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 			files = (
 				F04EBDD2288E9E0E0097E42F /* SettingsView.swift in Sources */,
 				F04EBDCE288E9DFC0097E42F /* HomeView.swift in Sources */,
+				F0473C3E28C9A26300C81821 /* SplashView.swift in Sources */,
 				F06F615628AD215A009F77D4 /* Utility.swift in Sources */,
 				F0F3E96428BCC72500706149 /* HistoryCard.swift in Sources */,
 				F047891228AE736C00D18748 /* SettingButton.swift in Sources */,
