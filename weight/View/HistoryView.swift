@@ -17,6 +17,7 @@ struct HistoryView: View {
     
     @State private var isAddAlertActive: Bool = false
     @State private var isSheetActive: Bool = false
+    @State private var isEdit: Bool = false
     @State private var lastWeight: Int = 40
     @State private var lastWeightTail: Int = 0
     @State private var date = Date()
@@ -34,6 +35,7 @@ struct HistoryView: View {
                                 let dateFormatter = DateFormatter()
                                 dateFormatter.dateFormat = "dd.MM.yyyy"
                                 date = dateFormatter.date(from: weight.date) ?? Date()
+                                isEdit = true
                                 isSheetActive.toggle()
                             } label: {
                                 HistoryCard(weight: weight, unit: unit)
@@ -46,6 +48,7 @@ struct HistoryView: View {
                     }
                 }
                 Button {
+                    isEdit = false
                     isSheetActive.toggle()
                 } label: {
                     Image(systemName: "plus.circle.fill")
@@ -61,7 +64,21 @@ struct HistoryView: View {
             ZStack {
                 VStack {
                     Section {
-                        Text("Add/Update Weight").font(.title2).fontWeight(.bold)
+                        HStack {
+                            Text("Add/Update Weight").font(.title2).fontWeight(.bold)
+                            Spacer()
+                            Button {
+                                isEdit = false
+                                isSheetActive.toggle()
+                            } label: {
+                                Image(systemName: "x.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(24)
                     }
                         .padding(.top, 32)
                     Section {
@@ -104,17 +121,20 @@ struct HistoryView: View {
                                 .background(Color.green)
                                 .font(.title3)
                         }.cornerRadius(16)
-                        Spacer()
-                        Button {
-                            isSheetActive.toggle()
-                        } label: {
-                            Text("Cancel")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .foregroundColor(.white)
-                                .background(.red)
-                                .font(.title3)
-                        }.cornerRadius(16)
+                        if isEdit {
+                            Spacer()
+                            Button {
+                                isEdit = false
+                                isSheetActive.toggle()
+                            } label: {
+                                Text("Delete")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .foregroundColor(.white)
+                                    .background(.red)
+                                    .font(.title3)
+                            }.cornerRadius(16)
+                        }
                     }.padding()
                     Spacer()
                 }.onAppear {

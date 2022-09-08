@@ -125,7 +125,21 @@ struct HomeView: View {
             ZStack {
                 VStack {
                     Section {
-                        Text("Add Weight").font(.title2).fontWeight(.bold)
+                        HStack {
+                            Text("Add Weight").font(.title2).fontWeight(.bold)
+                            Spacer()
+                            Button {
+                                isSheetActive.toggle()
+                            } label: {
+                                Image(systemName: "x.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(24)
+                        
                     }
                         .padding(.top, 32)
                     Section {
@@ -166,17 +180,6 @@ struct HomeView: View {
                                 .padding()
                                 .foregroundColor(.white)
                                 .background(Color.green)
-                                .font(.title3)
-                        }.cornerRadius(16)
-                        Spacer()
-                        Button {
-                            isSheetActive.toggle()
-                        } label: {
-                            Text("Cancel")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .foregroundColor(.white)
-                                .background(.red)
                                 .font(.title3)
                         }.cornerRadius(16)
                     }.padding()
