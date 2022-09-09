@@ -17,10 +17,11 @@ struct HistoryView: View {
     
     @State private var isAddAlertActive: Bool = false
     @State private var isSheetActive: Bool = false
-    @State private var isEdit: Bool = false
+    @State private var isEdit: Bool = true
     @State private var lastWeight: Int = 40
     @State private var lastWeightTail: Int = 0
     @State private var date = Date()
+    @State private var weightID: UUID?
 
     var body: some View {
         NavigationView {
@@ -30,12 +31,13 @@ struct HistoryView: View {
                         let parsedWeights = parseWeightsForHistory(weights: weights)
                         ForEach(parsedWeights, id: \.self) { weight in
                             Button {
+                                weightID = weight.id
+                                isEdit = true
                                 lastWeight = Int(weight.weight)
                                 lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
                                 let dateFormatter = DateFormatter()
                                 dateFormatter.dateFormat = "dd.MM.yyyy"
                                 date = dateFormatter.date(from: weight.date) ?? Date()
-                                isEdit = true
                                 isSheetActive.toggle()
                             } label: {
                                 HistoryCard(weight: weight, unit: unit)
@@ -49,6 +51,7 @@ struct HistoryView: View {
                 }
                 Button {
                     isEdit = false
+                    date = Date()
                     isSheetActive.toggle()
                 } label: {
                     Image(systemName: "plus.circle.fill")
@@ -124,6 +127,16 @@ struct HistoryView: View {
                         if isEdit {
                             Spacer()
                             Button {
+                                if let weightID = weightID {
+                                    for weight in weights {
+                                        if weight.id == weightID {
+                                            managedObjectContext.delete(weight)
+                                        }
+                                    }
+                                    if managedObjectContext.hasChanges {
+                                        try? managedObjectContext.save()
+                                    }
+                                }
                                 isEdit = false
                                 isSheetActive.toggle()
                             } label: {

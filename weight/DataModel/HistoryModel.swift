@@ -13,4 +13,5 @@ struct HistoryModel: Hashable {
     var icon: String
     var lightColor: Color
     var darkColor: Color
+    var id: UUID?
 }

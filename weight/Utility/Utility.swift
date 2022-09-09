@@ -52,13 +52,13 @@ func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryMo
         let weightValue = weight.weight
         let stringDate = formattedDate(date: weight.time, withYear: true)
         if index == reversed.count - 1 {
-            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "flag.circle.fill", lightColor: Color(0xFF3E2AD1), darkColor: Color(0xFF6753F4)))
+            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "flag.circle.fill", lightColor: Color(0xFF3E2AD1), darkColor: Color(0xFF6753F4), id: weight.id))
         } else if weight.weight == weightValues[index + 1] {
-            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "minus.circle.fill", lightColor: .gray, darkColor: .gray))
+            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "minus.circle.fill", lightColor: .gray, darkColor: .gray, id: weight.id))
         } else if weight.weight > weightValues[index + 1] {
-            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "arrow.up.circle.fill", lightColor: .red, darkColor: .red))
+            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "arrow.up.circle.fill", lightColor: .red, darkColor: .red, id: weight.id))
         } else {
-            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "arrow.down.circle.fill", lightColor: .green, darkColor: .green))
+            result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "arrow.down.circle.fill", lightColor: .green, darkColor: .green, id: weight.id))
         }
     }
     return result
