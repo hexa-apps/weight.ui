@@ -13,6 +13,8 @@ struct SettingsView: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
 
     @AppStorage("birthday") private var birthday: Date = Date()
+    @AppStorage("reminderCheck") private var reminderCheck: Bool = false
+    @AppStorage("reminderTime") private var reminderTime: Date = Date()
 
     @State private var clearAlert: Bool = false
     @State private var goalAlertActive: Bool = false
@@ -59,48 +61,62 @@ struct SettingsView: View {
                     }
                     Section("SETTINGS") {
                         Section {
-                            SettingButton(title: "Reminder", imageSystemName: "deskclock.fill") {
-                                let center = UNUserNotificationCenter.current()
-                                center.getNotificationSettings { settings in
-                                    switch settings.authorizationStatus {
-                                    case .authorized:
-                                        // TODO: Open reminder sheet
-                                        reminderSheet.toggle()
-                                    case .denied:
-                                        // TODO: Open informative alert
-                                        informativeAlert.toggle()
-                                    case .ephemeral:
-                                        print("Some permissions")
-                                    case .notDetermined:
-                                        center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
-                                            if success {
-                                                // TODO: Open reminder sheet
-                                                reminderSheet.toggle()
-                                            } else {
-                                                // TODO: Open informative alert
-                                                informativeAlert.toggle()
+                            Toggle("Reminder", isOn: $reminderCheck).onChange(of: reminderCheck) { newValue in
+                                if newValue {
+                                    let center = UNUserNotificationCenter.current()
+                                    center.getNotificationSettings { settings in
+                                        switch settings.authorizationStatus {
+                                        case .authorized:
+                                            // TODO: Set reminder
+                                            setReminder(isChecked: true, date: reminderTime)
+                                        case .denied:
+                                            // TODO: Open informative alert
+                                            informativeAlert.toggle()
+                                            reminderCheck = false
+                                        case .ephemeral:
+                                            print("Some permissions")
+                                        case .notDetermined:
+                                            center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                                if success {
+                                                    // TODO: Set reminder
+                                                    setReminder(isChecked: true, date: reminderTime)
+                                                } else {
+                                                    // TODO: Open informative alert
+                                                    informativeAlert.toggle()
+                                                    reminderCheck = false
+                                                }
                                             }
+                                        case .provisional:
+                                            print("Don't know")
+                                        default:
+                                            print("New case")
                                         }
-                                    case .provisional:
-                                        print("Don't know")
-                                    default:
-                                        print("New case")
                                     }
+                                } else {
+                                    setReminder(isChecked: false, date: reminderTime)
                                 }
                             }
-                                .foregroundColor(light: .black.opacity(0.75), dark: .white)
-                                .sheet(isPresented: $reminderSheet) {
-                                    Text("There will be reminder")
-                            }
-                                .alert(isPresented: $informativeAlert) {
-                                Alert(
-                                    title: Text("Notification Permission"),
-                                    message: Text("You need to give permission to use the reminder."),
-                                    primaryButton: .default(Text("Go to settings")) {
-                                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                                    },
-                                    secondaryButton: .cancel(Text("Cancel")))
+                        }.alert(isPresented: $informativeAlert) {
+                            Alert(
+                                title: Text("Notification Permission"),
+                                message: Text("You need to give permission to use the reminder."),
+                                primaryButton: .default(Text("Go to settings")) {
+                                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                },
+                                secondaryButton: .cancel(Text("Cancel")))
+                        }
+                        if reminderCheck {
+                            withAnimation {
+                                Section {
+                                    HStack {
+                                        DatePicker("Everyday", selection: $reminderTime, displayedComponents: .hourAndMinute).onChange(of: reminderTime) { newValue in
+                                            reminderTime = newValue
+                                            setReminder(isChecked: reminderCheck, date: reminderTime)
+                                        }
+                                    }
+
+                                }
                             }
                         }
                         Section {

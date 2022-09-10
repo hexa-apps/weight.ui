@@ -130,3 +130,29 @@ func parseWeights(weights: FetchedResults<WeightEntity>) -> LineChartData {
     }
     return chartData
 }
+
+func setReminder(isChecked: Bool, date: Date) {
+    let center = UNUserNotificationCenter.current()
+    if isChecked {
+        let content = UNMutableNotificationContent()
+        content.title = "Heyyo"
+        content.body = "Let's reach your goals"
+        content.sound = .default
+        var triggerDate = DateComponents()
+        let calendar = Calendar.current
+        triggerDate.hour = calendar.component(.hour, from: date)
+        triggerDate.minute = calendar.component(.minute, from: date)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: true)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        center.add(request) { error in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            } else {
+                print("Success")
+            }
+        }
+    } else {
+        center.removeAllDeliveredNotifications()
+        center.removeAllPendingNotificationRequests()
+    }
+}
