@@ -120,7 +120,7 @@ struct SettingsView: View {
                             }
                         }
                         Section {
-                            SettingButton(title: "Clear History", imageSystemName: "trash.fill") {
+                            SettingButton(title: "🗑 Clear History") {
                                 clearAlert.toggle()
                             }
                                 .foregroundColor(.red)
@@ -142,22 +142,22 @@ struct SettingsView: View {
                     }
                     Section("ABOUT") {
                         Section {
-                            SettingButton(title: "Suggestions", imageSystemName: "envelope.fill") {
+                            SettingButton(title: "📪 Suggestions") {
                                 print("Suggestions")
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "Share With Friends", imageSystemName: "square.and.arrow.up.fill") {
+                            SettingButton(title: "🎉 Share With Friends") {
                                 print("Share with friends")
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "Rate/Comment", imageSystemName: "star.fill") {
+                            SettingButton(title: "🌟 Rate/Comment") {
                                 print("Rate/Comment")
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "Other Apps", imageSystemName: "rectangle.3.offgrid.fill") {
+                            SettingButton(title: "📲 Other Apps") {
                                 print("Other Apps")
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
