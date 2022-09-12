@@ -138,8 +138,8 @@ struct HomeView: View {
                                     .foregroundColor(.gray)
                             }
                         }
-                        .padding(24)
-                        
+                            .padding(24)
+
                     }
                         .padding(.top, 32)
                     Section {
@@ -187,25 +187,19 @@ struct HomeView: View {
                 }.onAppear {
                     date = Date()
                 }
-                HalfASheet(isPresented: $isAddAlertActive) {
-                    GeometryReader { geometry in
-                        VStack {
-                            Text("Current Weight (\(unit))").fontWeight(.bold).padding(.top, 16)
-                            HStack(spacing: 0) {
-                                ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
-                                    lastWeight = newValue
-                                }
-                                ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
-                                    lastWeightTail = newValue
-                                }
-                            }
+                HalfASheet(isPresented: $isAddAlertActive, title: "Current Weight (\(unit))") {
+                    HStack(spacing: 0) {
+                        ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
+                            lastWeight = newValue
+                        }
+                        ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
+                            lastWeightTail = newValue
                         }
                     }
                 }
+                    .height(.fixed(320))
                     .disableDragToDismiss
             }
-
-
         }
             .fullScreenCover(isPresented: $onboardingViewShow) {
             OnboardingView(onboardingShow: $onboardingViewShow)

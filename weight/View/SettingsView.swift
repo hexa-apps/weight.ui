@@ -167,23 +167,19 @@ struct SettingsView: View {
                     }.listRowBackground(Color.clear)
                 }.navigationTitle("Settings")
             }
-            HalfASheet(isPresented: $goalAlertActive) {
-                GeometryReader { geometry in
-                    VStack {
-                        Text("Goal Weight (\(unit))").fontWeight(.bold).padding(.top, 16)
-                        HStack(spacing: 0) {
-                            ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
-                                goal = newValue
-                                UserDefaults.standard.set(goal, forKey: "goal")
-                            }
-                            ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
-                                goalTail = newValue
-                                UserDefaults.standard.set(goalTail, forKey: "goalTail")
-                            }
-                        }
+            HalfASheet(isPresented: $goalAlertActive, title: "Goal Weight (\(unit))") {
+                HStack(spacing: 0) {
+                    ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
+                        goal = newValue
+                        UserDefaults.standard.set(goal, forKey: "goal")
+                    }
+                    ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
+                        goalTail = newValue
+                        UserDefaults.standard.set(goalTail, forKey: "goalTail")
                     }
                 }
             }
+                .height(.fixed(320))
                 .disableDragToDismiss
         }
     }

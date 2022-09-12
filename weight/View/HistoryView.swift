@@ -10,11 +10,11 @@ import HalfASheet
 
 struct HistoryView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    
+
     let weights: FetchedResults<WeightEntity>
-    
+
     @AppStorage("weightUnit") private var unit: String = "kg"
-    
+
     @State private var isAddAlertActive: Bool = false
     @State private var isSheetActive: Bool = false
     @State private var isEdit: Bool = true
@@ -43,7 +43,6 @@ struct HistoryView: View {
                                 HistoryCard(weight: weight, unit: unit)
                                     .padding(.all, 4)
                             }
-                            
                         }
                     } else {
                         Text("No data")
@@ -81,7 +80,7 @@ struct HistoryView: View {
                                     .foregroundColor(.gray)
                             }
                         }
-                        .padding(24)
+                            .padding(24)
                     }
                         .padding(.top, 32)
                     Section {
@@ -153,33 +152,29 @@ struct HistoryView: View {
                 }.onAppear {
                     date = date
                 }
-                HalfASheet(isPresented: $isAddAlertActive) {
-                    GeometryReader { geometry in
-                        VStack {
-                            Text("Current Weight (\(unit))").fontWeight(.bold).padding(.top, 16)
-                            HStack(spacing: 0) {
-                                ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
-                                    lastWeight = newValue
-                                }
-                                ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
-                                    lastWeightTail = newValue
-                                }
-                            }
+                HalfASheet(isPresented: $isAddAlertActive, title: "Current Weight (\(unit))") {
+                    HStack(spacing: 0) {
+                        ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
+                            lastWeight = newValue
+                        }
+                        ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
+                            lastWeightTail = newValue
                         }
                     }
                 }
-                .disableDragToDismiss
-                .onAppear {
+                    .height(.fixed(320))
+                    .disableDragToDismiss
+                    .onAppear {
                     if let weight = weights.last {
-                        lastWeight =  Int(weight.weight)
+                        lastWeight = Int(weight.weight)
                         lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
                     } else {
-                        lastWeight =  UserDefaults.standard.integer(forKey: "goal")
+                        lastWeight = UserDefaults.standard.integer(forKey: "goal")
                         lastWeightTail = UserDefaults.standard.integer(forKey: "goalTail")
                     }
-                    
+
                 }
-                    
+
             }
         }
     }
