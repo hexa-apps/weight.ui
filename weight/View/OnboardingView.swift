@@ -8,19 +8,23 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    
+
     @Binding var onboardingShow: Bool
 
+    @AppStorage("reminderCheck") private var reminderCheck: Bool = false
+    @AppStorage("reminderTime") private var reminderTime: Date = Date()
+    
     @AppStorage("weightUnit") private var unit: String = "kg"
     let units = ["kg", "lb"]
 
-    @State private var goal: Int = 40
+    @State private var goal: Int = 70
     @State private var goalTail: Int = 0
-    
-    @State private var current: Int = 40
+
+    @State private var current: Int = 70
     @State private var currentTail: Int = 0
-    
+
     @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         TabView {
@@ -28,22 +32,24 @@ struct OnboardingView: View {
                 Text("Choose weight unit")
                     .font(.system(size: 36))
                     .padding()
-                Image(systemName: "ruler.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(.white)
-                    .padding(24)
-                    .background(Color(0xFF3E2AD1))
-                    .clipShape(Circle())
-                    .padding()
+                OnboardingCard(leftColor: colorScheme == .dark ? .black : .white, rightColor: Color(0xFF3E2AD1), midSystemName: "ruler.fill")
                 Form {
                     Section {
                         Picker("Unit", selection: $unit) {
                             ForEach(units, id: \.self) {
                                 Text($0)
                             }
-                        }.pickerStyle(.inline)
+                        }
+                            .pickerStyle(.inline)
+                            .onChange(of: unit) { newValue in
+                            if newValue == "kg" {
+                                current = 70
+                                goal = 60
+                            } else {
+                                current = 150
+                                goal = 130
+                            }
+                        }
                     }
                 }
             }
@@ -51,15 +57,7 @@ struct OnboardingView: View {
                 Text("Set goal weight")
                     .font(.system(size: 36))
                     .padding()
-                Image(systemName: "flag.2.crossed.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(.white)
-                    .padding(24)
-                    .background(Color(0xFF3E2AD1))
-                    .clipShape(Circle())
-                    .padding()
+                OnboardingCard(leftColor: Color(0xFF3E2AD1), rightColor: Color(0xFF3E2AD1), midSystemName: "flag.2.crossed.fill")
                 Form {
                     Section {
                         VStack {
@@ -84,16 +82,7 @@ struct OnboardingView: View {
                 Text("Set current weight")
                     .font(.system(size: 36))
                     .padding()
-                Image(systemName: "person.badge.clock.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(.white)
-                    .padding(24)
-                    .background(Color(0xFF3E2AD1))
-                    .clipShape(Circle())
-                    .padding()
-                
+                OnboardingCard(leftColor: Color(0xFF3E2AD1), rightColor: Color(0xFF3E2AD1), midSystemName: "person.badge.clock.fill")
                 Form {
                     Section {
                         VStack {
@@ -121,15 +110,7 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
                     .font(.system(size: 36))
                     .padding()
-                Image(systemName: "star.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(.white)
-                    .padding(24)
-                    .background(Color(0xFF3E2AD1))
-                    .clipShape(Circle())
-                    .padding()
+                OnboardingCard(leftColor: Color(0xFF3E2AD1), rightColor: colorScheme == .dark ? .black : .white, midSystemName: "star.fill")
                 Button {
                     let date = Date()
                     let weight = Double(current) + (Double(currentTail) * 0.1)
@@ -137,6 +118,35 @@ struct OnboardingView: View {
                     UserDefaults.standard.set(goalTail, forKey: "goalTail")
                     WeightDataController().add(weight: weight, when: date, context: managedObjectContext)
                     onboardingShow.toggle()
+                    let center = UNUserNotificationCenter.current()
+                    center.getNotificationSettings { settings in
+                        switch settings.authorizationStatus {
+                        case .authorized:
+                            // TODO: Set reminder
+                            reminderCheck = true
+                        case .denied:
+                            // TODO: Open informative alert
+                            reminderCheck = false
+                        case .ephemeral:
+                            print("Some permissions")
+                        case .notDetermined:
+                            center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                if success {
+                                    // TODO: Set reminder
+                                    reminderCheck = true
+                                } else {
+                                    // TODO: Open informative alert
+                                    reminderCheck = false
+                                }
+                                setReminder(isChecked: reminderCheck, date: reminderTime)
+                            }
+                        case .provisional:
+                            print("Don't know")
+                        default:
+                            print("New case")
+                        }
+                        setReminder(isChecked: reminderCheck, date: reminderTime)
+                    }
                 } label: {
                     HStack(spacing: 16) {
                         Text("Get Started")
@@ -149,8 +159,8 @@ struct OnboardingView: View {
                         .background(Color(0xFF3E2AD1))
                         .cornerRadius(8)
                 }
-                .padding(.top, 36)
-                .padding(.bottom, 24)
+                    .padding(.top, 36)
+                    .padding(.bottom, 24)
                 Text("Goal: \(goal).\(goalTail) \(unit)")
                     .font(.system(size: 18))
                     .fontWeight(.light)
@@ -159,6 +169,24 @@ struct OnboardingView: View {
                     .fontWeight(.light)
                 Spacer()
             }
-        }.tabViewStyle(.page)
+        }
+            .tabViewStyle(.page)
+            .onAppear {
+            setupAppearance()
+            if unit == "kg" {
+                current = 70
+                goal = 60
+            } else {
+                current = 150
+                goal = 140
+            }
+        }
+    }
+
+    func setupAppearance() {
+        let color: Color = colorScheme == .light ? Color(0xFF3E2AD1) : Color(0xFF6753F4)
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(color)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(color).withAlphaComponent(0.2)
+
     }
 }
