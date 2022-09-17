@@ -52,11 +52,17 @@ struct SettingsView: View {
                             }
                         }
                         Section {
-                            Picker("Unit", selection: $unit) {
-                                ForEach(units, id: \.self) {
-                                    Text($0)
-                                }
+                            HStack {
+                                Text("Unit")
+                                Spacer()
+                                Picker("Unit", selection: $unit) {
+                                    ForEach(units, id: \.self) {
+                                        Text($0)
+                                    }
+                                }.pickerStyle(.segmented)
+                                    .fixedSize()
                             }
+                            
                         }
                     }
                     Section("SETTINGS") {
@@ -119,6 +125,8 @@ struct SettingsView: View {
                                 }
                             }
                         }
+                    }
+                    Section("DATA") {
                         Section {
                             SettingButton(title: "🗑 Clear History") {
                                 clearAlert.toggle()
@@ -138,6 +146,12 @@ struct SettingsView: View {
                                     },
                                     secondaryButton: .cancel(Text("Cancel")))
                             }
+                            SettingButton(title: "📥 Import CSV") {
+                                print("")
+                            }.foregroundColor(light: .black, dark: .white)
+                            SettingButton(title: "📤 Export CSV") {
+                                print("")
+                            }.foregroundColor(light: .black, dark: .white)
                         }
                     }
                     Section("ABOUT") {
