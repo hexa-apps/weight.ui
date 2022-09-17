@@ -10,6 +10,8 @@ import HalfASheet
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) var manageObjectContext
+    @Environment(\.openURL) var openURL
+
     @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
 
     @AppStorage("birthday") private var birthday: Date = Date()
@@ -62,7 +64,7 @@ struct SettingsView: View {
                                 }.pickerStyle(.segmented)
                                     .fixedSize()
                             }
-                            
+
                         }
                     }
                     Section("SETTINGS") {
@@ -149,30 +151,42 @@ struct SettingsView: View {
                             SettingButton(title: "📥 Import CSV") {
                                 print("")
                             }.foregroundColor(light: .black, dark: .white)
+                                .opacity(0.3)
+                                .disabled(true)
                             SettingButton(title: "📤 Export CSV") {
                                 print("")
                             }.foregroundColor(light: .black, dark: .white)
+                                .opacity(0.3)
+                                .disabled(true)
                         }
                     }
                     Section("ABOUT") {
                         Section {
                             SettingButton(title: "📪 Suggestions") {
-                                print("Suggestions")
+                                let email = "hexagameapps@gmail.com?subject=Hexa Weight Tracker \(appVersion ?? "")"
+                                let mailto = "mailto:\(email)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+                                if let url = URL(string: mailto!) {
+                                    openURL(url)
+                                }
+                                
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "🎉 Share With Friends") {
-                                print("Share with friends")
-                            }.foregroundColor(light: .black.opacity(0.75), dark: .white)
+                            SettingButton(title: "🎉 Share With Friends", onTapFunction: shareSheet)
+                                .foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
-                            SettingButton(title: "🌟 Rate/Comment") {
-                                print("Rate/Comment")
+                            SettingButton(title: "🌟 Rate & Comment") {
+                                if let url = URL(string: "https://apps.apple.com/app/hexa-weight-tracker/id6443335021") {
+                                    openURL(url)
+                                }
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
                             SettingButton(title: "📲 Other Apps") {
-                                print("Other Apps")
+                                if let url = URL(string: "https://apps.apple.com/developer/berkay-oruc/id1636040465") {
+                                    openURL(url)
+                                }
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                     }
@@ -196,6 +210,12 @@ struct SettingsView: View {
                 .height(.fixed(320))
                 .disableDragToDismiss
         }
+    }
+    
+    func shareSheet() {
+        guard let urlShare = URL(string: "https://apps.apple.com/app/hexa-weight-tracker/id6443335021") else { return }
+        let activityVC = UIActivityViewController(activityItems: ["If you want to track your weight, have a look at this app.\n",urlShare], applicationActivities: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
     }
 }
 
