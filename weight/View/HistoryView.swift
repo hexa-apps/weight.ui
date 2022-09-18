@@ -11,8 +11,9 @@ import HalfASheet
 struct HistoryView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
-    let weights: FetchedResults<WeightEntity>
+    @FetchRequest var weights: FetchedResults<WeightEntity>
 
+    @AppStorage("dateFilter") private var dateFilter: Int = 0
     @AppStorage("weightUnit") private var unit: String = "kg"
 
     @State private var isAddAlertActive: Bool = false
@@ -23,27 +24,52 @@ struct HistoryView: View {
     @State private var date = Date()
     @State private var weightID: UUID?
 
+    init(filterIndex: Int) {
+        var filter: NSPredicate
+        if filterIndex == 0 {
+            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 86500) as CVarArg)
+        } else {
+            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 1000000) as CVarArg)
+        }
+        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: filter)
+    }
+
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
                 List {
                     if weights.count > 0 {
-                        let parsedWeights = parseWeightsForHistory(weights: weights)
-                        ForEach(parsedWeights, id: \.self) { weight in
-                            Button {
-                                weightID = weight.id
-                                isEdit = true
-                                lastWeight = Int(weight.weight)
-                                lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "dd.MM.yyyy"
-                                date = dateFormatter.date(from: weight.date) ?? Date()
-                                isSheetActive.toggle()
-                            } label: {
-                                HistoryCard(weight: weight, unit: unit)
-                                    .padding(.all, 4)
+                        Menu {
+                            Button("0") {
+                                dateFilter = 0
                             }
-                        }
+                            Button("1") {
+                                dateFilter = 1
+                            }
+                            Button("2") {
+                                dateFilter = 2
+                            }
+                        } label: {
+                            Label("\(dateFilter)", systemImage: "calendar")
+                        }.padding()
+                            let parsedWeights = parseWeightsForHistory(weights: weights)
+                            ForEach(parsedWeights, id: \.self) { weight in
+                                Button {
+                                    weightID = weight.id
+                                    isEdit = true
+                                    lastWeight = Int(weight.weight)
+                                    lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "dd.MM.yyyy"
+                                    date = dateFormatter.date(from: weight.date) ?? Date()
+                                    isSheetActive.toggle()
+                                } label: {
+                                    HistoryCard(weight: weight, unit: unit)
+                                        .padding(.all, 4)
+                                }
+                            }
+                        
+                        
                     } else {
                         Text("No data")
                     }

@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) var manageObjectContext
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
+    
+    @AppStorage("dateFilter") private var dateFilter: Int = 0
     
     var body: some View {
         TabView {
-            HomeView(weights: weights).tabItem {
+            HomeView().tabItem {
                 Label("", systemImage: "house").foregroundColor(Color(0xFF3E2AD1))
             }
-            HistoryView(weights: weights).tabItem {
+            HistoryView(filterIndex: dateFilter).tabItem {
                 Label("", systemImage: "calendar")
             }
             SettingsView().tabItem {

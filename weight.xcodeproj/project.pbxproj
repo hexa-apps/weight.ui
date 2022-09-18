@@ -23,6 +23,7 @@
 		F06F615428AD1288009F77D4 /* AdaptiveColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615328AD1288009F77D4 /* AdaptiveColor.swift */; };
 		F06F615628AD215A009F77D4 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F615528AD215A009F77D4 /* Utility.swift */; };
 		F07FB2E828AE199E007F809C /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = F07FB2E728AE199E007F809C /* HalfASheet */; };
+		F0C09F2E28D726DC00ACAACA /* HomeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C09F2D28D726DC00ACAACA /* HomeListView.swift */; };
 		F0CE8E4228B6140900FB0634 /* WeightDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CE8E4128B6140900FB0634 /* WeightDataController.swift */; };
 		F0D046E628B21760008D0C41 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = F0D046E528B21760008D0C41 /* SwiftUICharts */; };
 		F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0E44AAB28AEA177005F8E93 /* WeightDataModel.xcdatamodeld */; };
@@ -46,6 +47,7 @@
 		F06C806F28BD1F3D00F8DF51 /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
 		F06F615328AD1288009F77D4 /* AdaptiveColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveColor.swift; sourceTree = "<group>"; };
 		F06F615528AD215A009F77D4 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		F0C09F2D28D726DC00ACAACA /* HomeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListView.swift; sourceTree = "<group>"; };
 		F0CE8E4128B6140900FB0634 /* WeightDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightDataController.swift; sourceTree = "<group>"; };
 		F0E44AAC28AEA177005F8E93 /* WeightDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeightDataModel.xcdatamodel; sourceTree = "<group>"; };
 		F0F3E96328BCC72500706149 /* HistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCard.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				F042C3C628B4F5B50056D722 /* OnboardingView.swift */,
 				F04EBDC0288E99C60097E42F /* ContentView.swift */,
 				F04EBDCD288E9DFC0097E42F /* HomeView.swift */,
+				F0C09F2D28D726DC00ACAACA /* HomeListView.swift */,
 				F04EBDCF288E9E030097E42F /* HistoryView.swift */,
 				F04EBDD1288E9E0E0097E42F /* SettingsView.swift */,
 				F0473C3D28C9A26300C81821 /* SplashView.swift */,
@@ -241,6 +244,7 @@
 				F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */,
 				F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */,
 				F04EBDD0288E9E030097E42F /* HistoryView.swift in Sources */,
+				F0C09F2E28D726DC00ACAACA /* HomeListView.swift in Sources */,
 				F042C3C728B4F5B50056D722 /* OnboardingView.swift in Sources */,
 				F04EBDC1288E99C60097E42F /* ContentView.swift in Sources */,
 				F05864A228CFC8280079F1E9 /* OnboardingCard.swift in Sources */,
