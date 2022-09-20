@@ -156,3 +156,22 @@ func setReminder(isChecked: Bool, date: Date) {
         center.removeAllPendingNotificationRequests()
     }
 }
+
+func getNSPredicate(index: Int) -> NSPredicate {
+    var nspredicate: NSPredicate
+    let currentCalendar = Calendar.current
+    let components = currentCalendar.dateComponents([.day, .month, .year, .weekday], from: Date.now)
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd.MM.yyyy"
+    
+    if index == 0 {
+        let firstDay = (components.day ?? 0) - (components.weekday ?? 0) + 2
+        let lastDay = firstDay + 6
+        let firstArg = dateFormatter.date(from: "\(firstDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        let lastArg = dateFormatter.date(from: "\(lastDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        nspredicate = NSPredicate(format: "(time >= %@) AND (time <= %@)", firstArg as CVarArg, lastArg as CVarArg)
+    } else {
+        nspredicate = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 1000000) as CVarArg)
+    }
+    return nspredicate
+}

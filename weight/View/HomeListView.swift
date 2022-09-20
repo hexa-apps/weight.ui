@@ -25,30 +25,28 @@ struct HomeListView: View {
     @AppStorage("goalTail") private var goalTail: Int = 0
     @AppStorage("weightUnit") private var unit: String = "kg"
     
+    private let menuTitleList: [String] = ["This week", "This month"] //, "All times", "Last 7 days", "Last 30 days"]
+    
     init(filterIndex: Int) {
-        var filter: NSPredicate
-        if filterIndex == 0 {
-            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 86500) as CVarArg)
-        } else {
-            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 1000000) as CVarArg)
-        }
-        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: filter)
+        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: getNSPredicate(index: filterIndex))
     }
 
     var body: some View {
         List {
             Menu {
-                Button("0") {
-                    dateFilter = 0
-                }
-                Button("1") {
-                    dateFilter = 1
-                }
-                Button("2") {
-                    dateFilter = 2
+                ForEach (menuTitleList.indices, id: \.self) { index in
+                    Button {
+                        dateFilter = index
+                    } label: {
+                        if index == dateFilter {
+                            Label(menuTitleList[index], systemImage: "checkmark")
+                        } else {
+                            Text(menuTitleList[index])
+                        }
+                    }
                 }
             } label: {
-                Label("\(dateFilter)", systemImage: "calendar")
+                Label(menuTitleList[dateFilter], systemImage: "calendar")
             }.padding()
             HStack {
                 VStack {

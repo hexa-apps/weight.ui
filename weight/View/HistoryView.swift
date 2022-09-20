@@ -23,15 +23,11 @@ struct HistoryView: View {
     @State private var lastWeightTail: Int = 0
     @State private var date = Date()
     @State private var weightID: UUID?
+    
+    private let menuTitleList: [String] = ["This Week", "This Month"] //, "All Times", "Last 7 Days", "Last 30 Days"]
 
     init(filterIndex: Int) {
-        var filter: NSPredicate
-        if filterIndex == 0 {
-            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 86500) as CVarArg)
-        } else {
-            filter = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 1000000) as CVarArg)
-        }
-        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: filter)
+        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: getNSPredicate(index: filterIndex))
     }
 
     var body: some View {
@@ -40,17 +36,19 @@ struct HistoryView: View {
                 List {
                     if weights.count > 0 {
                         Menu {
-                            Button("0") {
-                                dateFilter = 0
-                            }
-                            Button("1") {
-                                dateFilter = 1
-                            }
-                            Button("2") {
-                                dateFilter = 2
+                            ForEach (menuTitleList.indices, id: \.self) { index in
+                                Button {
+                                    dateFilter = index
+                                } label: {
+                                    if index == dateFilter {
+                                        Label(menuTitleList[index], systemImage: "checkmark")
+                                    } else {
+                                        Text(menuTitleList[index])
+                                    }
+                                }
                             }
                         } label: {
-                            Label("\(dateFilter)", systemImage: "calendar")
+                            Label(menuTitleList[dateFilter], systemImage: "calendar")
                         }.padding()
                             let parsedWeights = parseWeightsForHistory(weights: weights)
                             ForEach(parsedWeights, id: \.self) { weight in
