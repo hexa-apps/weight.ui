@@ -171,7 +171,26 @@ func getNSPredicate(index: Int) -> NSPredicate {
         let lastArg = dateFormatter.date(from: "\(lastDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
         nspredicate = NSPredicate(format: "(time >= %@) AND (time <= %@)", firstArg as CVarArg, lastArg as CVarArg)
     } else {
-        nspredicate = NSPredicate(format: "time >= %@", Calendar.current.startOfDay(for: Date() - 1000000) as CVarArg)
+        let firstArg = dateFormatter.date(from: "01.\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        let lastArg = dateFormatter.date(from: "\(lastDay(of: components.month ?? 11, year: components.year ?? 2022)).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        nspredicate = NSPredicate(format: "(time >= %@) AND (time <= %@)", firstArg as CVarArg, lastArg as CVarArg)
     }
     return nspredicate
+}
+
+func lastDay(of month: Int, year: Int) -> Int {
+    let calendar = Calendar.current
+    var components = DateComponents(calendar: calendar, year: year, month: month)
+    components.setValue(month + 1, for: .month)
+    components.setValue(0, for: .day)
+    let date = calendar.date(from: components) ?? Date.now
+    return calendar.component(.day, from: date)
+}
+
+func getCSVTitle() -> String? {
+    var csvTitle: String?
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd-MM-yyyy"
+    csvTitle = "HexaWeight_\(dateFormatter.string(from: Date.now)).csv"
+    return csvTitle
 }

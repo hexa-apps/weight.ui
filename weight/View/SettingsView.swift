@@ -18,10 +18,13 @@ struct SettingsView: View {
     @AppStorage("reminderCheck") private var reminderCheck: Bool = false
     @AppStorage("reminderTime") private var reminderTime: Date = Date()
 
+    @State private var document: MessageDocument = MessageDocument(message: "Hello, World!")
     @State private var clearAlert: Bool = false
     @State private var goalAlertActive: Bool = false
     @State private var informativeAlert: Bool = false
     @State private var reminderSheet: Bool = false
+    @State private var isImporting: Bool = false
+    @State private var isExporting: Bool = false
     @State private var goal: Int = UserDefaults.standard.integer(forKey: "goal")
     @State private var goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
 
@@ -149,15 +152,13 @@ struct SettingsView: View {
                                     secondaryButton: .cancel(Text("Cancel")))
                             }
                             SettingButton(title: "📥 Import CSV") {
-                                print("")
-                            }.foregroundColor(light: .black, dark: .white)
-                                .opacity(0.3)
-                                .disabled(true)
+                                isImporting = true
+                            }
+                                .foregroundColor(light: .black, dark: .white)
                             SettingButton(title: "📤 Export CSV") {
-                                print("")
-                            }.foregroundColor(light: .black, dark: .white)
-                                .opacity(0.3)
-                                .disabled(true)
+                                isExporting = true
+                            }
+                                .foregroundColor(light: .black, dark: .white)
                         }
                     }
                     Section("ABOUT") {
@@ -168,7 +169,7 @@ struct SettingsView: View {
                                 if let url = URL(string: mailto!) {
                                     openURL(url)
                                 }
-                                
+
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                         Section {
@@ -193,7 +194,29 @@ struct SettingsView: View {
                     Section {
                         Text("Weight Tracker \(appVersion ?? "")").font(.callout).frame(maxWidth: .infinity, alignment: .center)
                     }.listRowBackground(Color.clear)
-                }.navigationTitle("Settings")
+                }
+                    .fileExporter(isPresented: $isExporting, document: document, contentType: .plainText, defaultFilename: getCSVTitle()) { result in
+
+                }
+                    .fileImporter(isPresented: $isImporting, allowedContentTypes: [.plainText], allowsMultipleSelection: false) { result in
+                    do {
+                        guard let selectedFile: URL = try result.get().first else { return }
+                        if selectedFile.startAccessingSecurityScopedResource() {
+                            guard let message = String(data: try Data(contentsOf: selectedFile), encoding: .utf8) else { return }
+                            defer { selectedFile.stopAccessingSecurityScopedResource() }
+                            print(message)
+                            document.message = message
+                        } else {
+                            // Handle denied access
+                        }
+                    } catch {
+                        // Handle failure.
+                        print("Unable to read file contents")
+                        print(error.localizedDescription)
+                    }
+                }
+                    .navigationTitle("Settings")
+
             }
             HalfASheet(isPresented: $goalAlertActive, title: "Goal Weight (\(unit))") {
                 HStack(spacing: 0) {
@@ -211,10 +234,10 @@ struct SettingsView: View {
                 .disableDragToDismiss
         }
     }
-    
+
     func shareSheet() {
         guard let urlShare = URL(string: "https://apps.apple.com/app/hexa-weight-tracker/id6443335021") else { return }
-        let activityVC = UIActivityViewController(activityItems: ["If you want to track your weight, have a look at this app.\n",urlShare], applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: ["If you want to track your weight, have a look at this app.\n", urlShare], applicationActivities: nil)
         UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
     }
 }
