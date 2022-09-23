@@ -64,20 +64,53 @@ func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryMo
     return result
 }
 
-func parseWeights(weights: FetchedResults<WeightEntity>) -> LineChartData {
-    var weightValues = weights.map { $0.weight }
+func filterWeightsForChart(weight: WeightEntity, dateRange: ClosedRange<Date>?) -> Bool {
+    if let dateRange = dateRange {
+        if let date = weight.time {
+            return dateRange.contains(date)
+        }
+        return false
+    }
+    return false
+}
+
+func getDateRange(filterIndex: Int) -> ClosedRange<Date> {
+    let currentCalendar = Calendar.current
+    let components = currentCalendar.dateComponents([.day, .month, .year, .weekday], from: Date.now)
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd.MM.yyyy"
+    if filterIndex == 0 {
+        let firstDay = (components.day ?? 0) - (components.weekday ?? 0) + 2
+        let lastDay = firstDay + 6
+        let firstArg = dateFormatter.date(from: "\(firstDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        let lastArg = dateFormatter.date(from: "\(lastDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        return firstArg...lastArg
+    } else if filterIndex == 1 {
+        let firstArg = dateFormatter.date(from: "01.\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        let lastArg = dateFormatter.date(from: "\(lastDay(of: components.month ?? 11, year: components.year ?? 2022)).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
+        return firstArg...lastArg
+    } else {
+        return Date.now...Date.now
+    }
+}
+
+func parseWeights(weights: FetchedResults<WeightEntity>, filterIndex: Int) -> LineChartData {
+    let filteredWeights = weights.filter { weight in
+        return filterWeightsForChart(weight: weight, dateRange: getDateRange(filterIndex: filterIndex) )
+    }
+    var weightValues = filteredWeights.map { $0.weight }
     let goal: Int = UserDefaults.standard.integer(forKey: "goal")
     let goalTail: Int = UserDefaults.standard.integer(forKey: "goalTail")
     let goalValue: Double = Double(goal) + (Double(goalTail) / 10)
     weightValues.append(goalValue)
     weightValues.sort()
     var dataPoints: [LineChartDataPoint] = []
-    if weights.count == 1 {
-        let timeString = formattedDate(date: weights[0].time, withYear: false)
-        dataPoints.append(LineChartDataPoint(value: weights[0].weight, xAxisLabel: timeString, description: timeString, date: weights[0].time))
-        dataPoints.append(LineChartDataPoint(value: weights[0].weight, xAxisLabel: timeString, description: timeString, date: weights[0].time))
+    if filteredWeights.count == 1 {
+        let timeString = formattedDate(date: filteredWeights[0].time, withYear: false)
+        dataPoints.append(LineChartDataPoint(value: filteredWeights[0].weight, xAxisLabel: timeString, description: timeString, date: filteredWeights[0].time))
+        dataPoints.append(LineChartDataPoint(value: filteredWeights[0].weight, xAxisLabel: timeString, description: timeString, date: filteredWeights[0].time))
     } else {
-        dataPoints = weights.map {
+        dataPoints = filteredWeights.map {
             let timeString = formattedDate(date: $0.time, withYear: false)
             return LineChartDataPoint(value: $0.weight, xAxisLabel: timeString, description: timeString, date: $0.time)
         }
@@ -155,27 +188,6 @@ func setReminder(isChecked: Bool, date: Date) {
         center.removeAllDeliveredNotifications()
         center.removeAllPendingNotificationRequests()
     }
-}
-
-func getNSPredicate(index: Int) -> NSPredicate {
-    var nspredicate: NSPredicate
-    let currentCalendar = Calendar.current
-    let components = currentCalendar.dateComponents([.day, .month, .year, .weekday], from: Date.now)
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "dd.MM.yyyy"
-    
-    if index == 0 {
-        let firstDay = (components.day ?? 0) - (components.weekday ?? 0) + 2
-        let lastDay = firstDay + 6
-        let firstArg = dateFormatter.date(from: "\(firstDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
-        let lastArg = dateFormatter.date(from: "\(lastDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
-        nspredicate = NSPredicate(format: "(time >= %@) AND (time <= %@)", firstArg as CVarArg, lastArg as CVarArg)
-    } else {
-        let firstArg = dateFormatter.date(from: "01.\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
-        let lastArg = dateFormatter.date(from: "\(lastDay(of: components.month ?? 11, year: components.year ?? 2022)).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
-        nspredicate = NSPredicate(format: "(time >= %@) AND (time <= %@)", firstArg as CVarArg, lastArg as CVarArg)
-    }
-    return nspredicate
 }
 
 func lastDay(of month: Int, year: Int) -> Int {

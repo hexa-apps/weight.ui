@@ -16,7 +16,7 @@ struct HomeView: View {
 
     var body: some View {
         NavigationView {
-            HomeListView(filterIndex: dateFilter)
+            HomeListView()
                 .navigationTitle("Summary")
                 .fullScreenCover(isPresented: $onboardingViewShow) {
                 OnboardingView(onboardingShow: $onboardingViewShow)

@@ -18,36 +18,17 @@ struct HomeListView: View {
     @State private var lastWeightTail: Int = 0
     @State private var date = Date()
     
-    @FetchRequest var weights: FetchedResults<WeightEntity>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
 
-    @AppStorage("dateFilter") private var dateFilter: Int = 0
     @AppStorage("goal") private var goal: Int = 40
     @AppStorage("goalTail") private var goalTail: Int = 0
     @AppStorage("weightUnit") private var unit: String = "kg"
     
+    @AppStorage("dateFilter") private var dateFilter: Int = 0
     private let menuTitleList: [String] = ["This week", "This month"] //, "All times", "Last 7 days", "Last 30 days"]
-    
-    init(filterIndex: Int) {
-        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: getNSPredicate(index: filterIndex))
-    }
 
     var body: some View {
         List {
-            Menu {
-                ForEach (menuTitleList.indices, id: \.self) { index in
-                    Button {
-                        dateFilter = index
-                    } label: {
-                        if index == dateFilter {
-                            Label(menuTitleList[index], systemImage: "checkmark")
-                        } else {
-                            Text(menuTitleList[index])
-                        }
-                    }
-                }
-            } label: {
-                Label(menuTitleList[dateFilter], systemImage: "calendar")
-            }.padding()
             HStack {
                 VStack {
                     Text("Initial").font(.callout).fontWeight(.bold)
@@ -83,6 +64,21 @@ struct HomeListView: View {
             }.listRowBackground(Color(0xFF3E2AD1))
             if weights.count > 0 {
                 Section("CHART") {
+                    Menu {
+                        ForEach (menuTitleList.indices, id: \.self) { index in
+                            Button {
+                                dateFilter = index
+                            } label: {
+                                if index == dateFilter {
+                                    Label(menuTitleList[index], systemImage: "checkmark")
+                                } else {
+                                    Text(menuTitleList[index])
+                                }
+                            }
+                        }
+                    } label: {
+                        Label(menuTitleList[dateFilter], systemImage: "calendar")
+                    }.padding()
                     VStack(spacing: 16) {
                         HStack {
                             Spacer()
@@ -96,7 +92,7 @@ struct HomeListView: View {
                         }
                             .font(.callout)
                             .padding(.top, 16)
-                        let data = parseWeights(weights: weights)
+                        let data = parseWeights(weights: weights, filterIndex: dateFilter)
                         LineChart(chartData: data)
                             .pointMarkers(chartData: data)
                             .touchOverlay(chartData: data,

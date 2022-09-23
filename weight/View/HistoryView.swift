@@ -11,9 +11,8 @@ import HalfASheet
 struct HistoryView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
-    @FetchRequest var weights: FetchedResults<WeightEntity>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
 
-    @AppStorage("dateFilter") private var dateFilter: Int = 0
     @AppStorage("weightUnit") private var unit: String = "kg"
 
     @State private var isAddAlertActive: Bool = false
@@ -24,31 +23,10 @@ struct HistoryView: View {
     @State private var date = Date()
     @State private var weightID: UUID?
 
-    private let menuTitleList: [String] = ["This Week", "This Month"] //, "All Times", "Last 7 Days", "Last 30 Days"]
-
-    init(filterIndex: Int) {
-        _weights = FetchRequest<WeightEntity>(sortDescriptors: [SortDescriptor(\.time, order: .forward)], predicate: getNSPredicate(index: filterIndex))
-    }
-
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
                 List {
-                    Menu {
-                        ForEach (menuTitleList.indices, id: \.self) { index in
-                            Button {
-                                dateFilter = index
-                            } label: {
-                                if index == dateFilter {
-                                    Label(menuTitleList[index], systemImage: "checkmark")
-                                } else {
-                                    Text(menuTitleList[index])
-                                }
-                            }
-                        }
-                    } label: {
-                        Label(menuTitleList[dateFilter], systemImage: "calendar")
-                    }.padding()
                     if weights.count > 0 {
                         let parsedWeights = parseWeightsForHistory(weights: weights)
                         ForEach(parsedWeights, id: \.self) { weight in

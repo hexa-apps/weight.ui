@@ -17,7 +17,7 @@ struct ContentView: View {
             HomeView().tabItem {
                 Label("", systemImage: "house").foregroundColor(Color(0xFF3E2AD1))
             }
-            HistoryView(filterIndex: dateFilter).tabItem {
+            HistoryView().tabItem {
                 Label("", systemImage: "calendar")
             }
             SettingsView().tabItem {
