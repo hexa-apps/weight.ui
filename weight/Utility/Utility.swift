@@ -44,7 +44,7 @@ func formattedDate(date: Date?, withYear: Bool) -> String {
     return dateFormatter.string(from: date)
 }
 
-func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryModel] {
+func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryGroupModel] {
     let reversed = weights.reversed()
     let weightValues = reversed.map { $0.weight }
     var result: [HistoryModel] = []
@@ -61,7 +61,16 @@ func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryMo
             result.append(HistoryModel(weight: weightValue, date: stringDate, icon: "arrow.down.circle.fill", lightColor: .green, darkColor: .green, id: weight.id))
         }
     }
-    return result
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd.MM.yyyy"
+    let groupedHistory = Dictionary(grouping: result) { (history) -> DateComponents in
+        let weightDate = dateFormatter.date(from: history.date) ?? Date()
+        let date = Calendar.current.dateComponents([.year, .month], from: weightDate)
+        return date
+    }
+    return groupedHistory.sorted {
+        $0.key.year! == $1.key.year! ? $0.key.month! > $1.key.month!: $0.key.year! > $1.key.year!
+    }.map { HistoryGroupModel(title: "\($0.key.year ?? 2023), \(DateFormatter().monthSymbols[($0.key.month ?? 4) - 1])", weights: $0.value) }
 }
 
 func filterWeightsForChart(weight: WeightEntity, dateRange: ClosedRange<Date>?) -> Bool {
@@ -96,7 +105,7 @@ func getDateRange(filterIndex: Int) -> ClosedRange<Date> {
 
 func parseWeights(weights: FetchedResults<WeightEntity>, filterIndex: Int) -> LineChartData {
     let filteredWeights = weights.filter { weight in
-        return filterWeightsForChart(weight: weight, dateRange: getDateRange(filterIndex: filterIndex) )
+        return filterWeightsForChart(weight: weight, dateRange: getDateRange(filterIndex: filterIndex))
     }
     var weightValues = filteredWeights.map { $0.weight }
     let goal: Int = UserDefaults.standard.integer(forKey: "goal")

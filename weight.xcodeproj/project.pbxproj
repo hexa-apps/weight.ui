@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F01E6C0628DE289500EEE173 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = F01E6C0528DE289500EEE173 /* SwiftCSV */; };
+		F03F604E28DE510A00BD139E /* HistoryGroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */; };
 		F042C3C728B4F5B50056D722 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F042C3C628B4F5B50056D722 /* OnboardingView.swift */; };
 		F0473C3E28C9A26300C81821 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0473C3D28C9A26300C81821 /* SplashView.swift */; };
 		F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047890F28AE4F8400D18748 /* ResizeablePicker.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGroupModel.swift; sourceTree = "<group>"; };
 		F042C3C628B4F5B50056D722 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F0473C3D28C9A26300C81821 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		F047890F28AE4F8400D18748 /* ResizeablePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeablePicker.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				F0CE8E4128B6140900FB0634 /* WeightDataController.swift */,
 				F06C806F28BD1F3D00F8DF51 /* HistoryModel.swift */,
 				F073042C28DB47B300142469 /* CSVDocument.swift */,
+				F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */,
 			);
 			path = DataModel;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				F0F3E96428BCC72500706149 /* HistoryCard.swift in Sources */,
 				F047891228AE736C00D18748 /* SettingButton.swift in Sources */,
 				F06F615428AD1288009F77D4 /* AdaptiveColor.swift in Sources */,
+				F03F604E28DE510A00BD139E /* HistoryGroupModel.swift in Sources */,
 				F047891028AE4F8400D18748 /* ResizeablePicker.swift in Sources */,
 				F0E44AAD28AEA177005F8E93 /* WeightDataModel.xcdatamodeld in Sources */,
 				F04EBDD0288E9E030097E42F /* HistoryView.swift in Sources */,
