@@ -7,18 +7,18 @@
 
 import SwiftUI
 import HalfASheet
+import SwiftCSV
 
 struct SettingsView: View {
-    @Environment(\.managedObjectContext) var manageObjectContext
+    @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.openURL) var openURL
 
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .forward)]) var weights: FetchedResults<WeightEntity>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.time, order: .reverse)]) var weights: FetchedResults<WeightEntity>
 
     @AppStorage("birthday") private var birthday: Date = Date()
     @AppStorage("reminderCheck") private var reminderCheck: Bool = false
     @AppStorage("reminderTime") private var reminderTime: Date = Date()
 
-    @State private var document: MessageDocument = MessageDocument(message: "Hello, World!")
     @State private var clearAlert: Bool = false
     @State private var goalAlertActive: Bool = false
     @State private var informativeAlert: Bool = false
@@ -30,6 +30,32 @@ struct SettingsView: View {
 
     @AppStorage("weightUnit") private var unit: String = "kg"
     let units = ["kg", "lb"]
+    
+    func importCSVDocument(from url: URL, weights: FetchedResults<WeightEntity>) {
+        if url.pathExtension == "csv" {
+            do {
+                let csvFile: CSV = try CSV<Named>(url: url)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+                let weightTimes = weights.map{ $0.time }
+                let filteredList = csvFile.rows.filter { row in
+                    guard let timeString = row["time"] else { return false }
+                    guard let time = dateFormatter.date(from: timeString) else { return false }
+                    if weightTimes.contains(time) {
+                        return false
+                    }
+                    guard let weightString = row["weight"] else { return false}
+                    guard let weight = Double(weightString) else { return false }
+                    WeightDataController().startAddingWeightProcess(weight: Double(weight), when: time, weights: weights, context: managedObjectContext)
+                    return true
+                }
+                print(filteredList.count)
+            } catch {
+                print("Error import csv")
+            }
+            
+        }
+    }
 
     var body: some View {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -143,10 +169,10 @@ struct SettingsView: View {
                                     message: Text("Are you sure?"),
                                     primaryButton: .destructive(Text("Clear")) {
                                         for weight in weights {
-                                            manageObjectContext.delete(weight)
+                                            managedObjectContext.delete(weight)
                                         }
-                                        if manageObjectContext.hasChanges {
-                                            try? manageObjectContext.save()
+                                        if managedObjectContext.hasChanges {
+                                            try? managedObjectContext.save()
                                         }
                                     },
                                     secondaryButton: .cancel(Text("Cancel")))
@@ -195,20 +221,13 @@ struct SettingsView: View {
                         Text("Weight Tracker \(appVersion ?? "")").font(.callout).frame(maxWidth: .infinity, alignment: .center)
                     }.listRowBackground(Color.clear)
                 }
-                    .fileExporter(isPresented: $isExporting, document: document, contentType: .plainText, defaultFilename: getCSVTitle()) { result in
-
+                    .fileExporter(isPresented: $isExporting, document: exportCSVDocument(weights: weights), contentType: .plainText, defaultFilename: getCSVTitle()) { result in
+                        
                 }
                     .fileImporter(isPresented: $isImporting, allowedContentTypes: [.plainText], allowsMultipleSelection: false) { result in
                     do {
                         guard let selectedFile: URL = try result.get().first else { return }
-                        if selectedFile.startAccessingSecurityScopedResource() {
-                            guard let message = String(data: try Data(contentsOf: selectedFile), encoding: .utf8) else { return }
-                            defer { selectedFile.stopAccessingSecurityScopedResource() }
-                            print(message)
-                            document.message = message
-                        } else {
-                            // Handle denied access
-                        }
+                        importCSVDocument(from: selectedFile, weights: weights)
                     } catch {
                         // Handle failure.
                         print("Unable to read file contents")

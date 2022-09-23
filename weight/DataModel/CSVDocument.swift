@@ -8,12 +8,12 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct MessageDocument: FileDocument {
+struct CSVDocument: FileDocument {
     
-    var message: String
+    var content: String
     
-    init(message: String) {
-        self.message = message
+    init(content: String) {
+        self.content = content
     }
     
     init(configuration: ReadConfiguration) throws {
@@ -23,11 +23,11 @@ struct MessageDocument: FileDocument {
             throw CocoaError(.fileReadCorruptFile)
         }
         
-        message = string
+        content = string
     }
     
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        return FileWrapper(regularFileWithContents: message.data(using: .utf8)!)
+        return FileWrapper(regularFileWithContents: content.data(using: .utf8)!)
     }
     
     static var readableContentTypes: [UTType] { [.plainText] }

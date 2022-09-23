@@ -206,3 +206,11 @@ func getCSVTitle() -> String? {
     csvTitle = "HexaWeight_\(dateFormatter.string(from: Date.now)).csv"
     return csvTitle
 }
+
+func exportCSVDocument(weights: FetchedResults<WeightEntity>) -> CSVDocument {
+    var content: String = "time,weight\n"
+    weights.forEach { weight in
+        content += "\(weight.time ?? Date.now),\(weight.weight)\n"
+    }
+    return CSVDocument(content: content)
+}
