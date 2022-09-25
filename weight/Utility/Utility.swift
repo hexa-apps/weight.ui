@@ -175,6 +175,8 @@ func parseWeights(weights: FetchedResults<WeightEntity>, filterIndex: Int) -> Li
 
 func setReminder(isChecked: Bool, date: Date) {
     let center = UNUserNotificationCenter.current()
+    center.removeAllDeliveredNotifications()
+    center.removeAllPendingNotificationRequests()
     if isChecked {
         let content = UNMutableNotificationContent()
         content.title = "Heyyo"
@@ -193,9 +195,6 @@ func setReminder(isChecked: Bool, date: Date) {
                 print("Success")
             }
         }
-    } else {
-        center.removeAllDeliveredNotifications()
-        center.removeAllPendingNotificationRequests()
     }
 }
 
