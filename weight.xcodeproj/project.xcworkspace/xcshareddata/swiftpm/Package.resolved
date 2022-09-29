@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "halfasheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/franklynw/HalfASheet",
+      "state" : {
+        "revision" : "4f43296b3722082dd5735521ee0fbf25e61cd21c",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swiftcsv",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftcsv/SwiftCSV.git",
+      "state" : {
+        "revision" : "96fa14b92e88e0befdbc8bc31c7c2c9594a30060",
+        "version" : "0.8.1"
+      }
+    },
+    {
+      "identity" : "swiftuicharts",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/willdale/SwiftUICharts",
+      "state" : {
+        "revision" : "9a71bffb72c35960c6836891ca1e13e089532991",
+        "version" : "2.10.1"
+      }
+    }
+  ],
+  "version" : 2
+}
