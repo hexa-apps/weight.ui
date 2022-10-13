@@ -15,12 +15,13 @@ struct HomeView: View {
     @AppStorage("isOnboardingView") private var onboardingViewShow = true
 
     var body: some View {
-        NavigationView {
+        VStack {
+            TitleComponent(title: "Summary")
             HomeListView()
-                .navigationTitle("Summary")
-                .fullScreenCover(isPresented: $onboardingViewShow) {
-                OnboardingView(onboardingShow: $onboardingViewShow)
-            }
+        }.background(light: .systemsBackground, dark: .black)
+            .fullScreenCover(isPresented: $onboardingViewShow) {
+            OnboardingView(onboardingShow: $onboardingViewShow)
         }
+//        }
     }
 }
