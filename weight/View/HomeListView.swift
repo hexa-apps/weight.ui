@@ -25,7 +25,7 @@ struct HomeListView: View {
     @AppStorage("weightUnit") private var unit: String = "kg"
     
     @AppStorage("dateFilter") private var dateFilter: Int = 0
-    private let menuTitleList: [String] = ["This week", "This month"] //, "All times", "Last 7 days", "Last 30 days"]
+    private let menuTitleList: [String] = ["This week", "This month", "Last 30 days", "All times"] //, "All times", "Last 7 days", "Last 30 days"]
 
     var body: some View {
         List {
