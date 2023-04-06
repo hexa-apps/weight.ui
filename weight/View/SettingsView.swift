@@ -60,7 +60,8 @@ struct SettingsView: View {
     var body: some View {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         ZStack {
-            NavigationView {
+            VStack {
+                TitleComponent(title: "Settings")
                 List {
                     Section("PROFILE") {
                         Section {
@@ -234,7 +235,6 @@ struct SettingsView: View {
                         print(error.localizedDescription)
                     }
                 }
-                    .navigationTitle("Settings")
 
             }
             HalfASheet(isPresented: $goalAlertActive, title: "Goal Weight (\(unit))") {

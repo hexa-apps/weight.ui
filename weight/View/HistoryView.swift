@@ -24,7 +24,8 @@ struct HistoryView: View {
     @State private var weightID: UUID?
 
     var body: some View {
-        NavigationView {
+        VStack {
+            TitleComponent(title: "History")
             ZStack(alignment: .bottomTrailing) {
                 List {
                     if weights.count > 0 {
@@ -67,7 +68,6 @@ struct HistoryView: View {
                         .padding(.trailing, 36)
                 }
             }
-                .navigationTitle("History")
         }.sheet(isPresented: $isSheetActive) {
             ZStack {
                 VStack {

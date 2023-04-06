@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F01E6C0628DE289500EEE173 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = F01E6C0528DE289500EEE173 /* SwiftCSV */; };
+		F02D632B28F758D00086849A /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02D632A28F758D00086849A /* Title.swift */; };
 		F03F604E28DE510A00BD139E /* HistoryGroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */; };
 		F042C3C728B4F5B50056D722 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F042C3C628B4F5B50056D722 /* OnboardingView.swift */; };
 		F0473C3E28C9A26300C81821 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0473C3D28C9A26300C81821 /* SplashView.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F02D632A28F758D00086849A /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGroupModel.swift; sourceTree = "<group>"; };
 		F042C3C628B4F5B50056D722 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F0473C3D28C9A26300C81821 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				F047891128AE736C00D18748 /* SettingButton.swift */,
 				F0F3E96328BCC72500706149 /* HistoryCard.swift */,
 				F05864A128CFC8280079F1E9 /* OnboardingCard.swift */,
+				F02D632A28F758D00086849A /* Title.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -244,6 +247,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F02D632B28F758D00086849A /* Title.swift in Sources */,
 				F04EBDD2288E9E0E0097E42F /* SettingsView.swift in Sources */,
 				F04EBDCE288E9DFC0097E42F /* HomeView.swift in Sources */,
 				F0473C3E28C9A26300C81821 /* SplashView.swift in Sources */,
@@ -391,7 +395,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"weight/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Q2DS6F54X;
 				ENABLE_PREVIEWS = YES;
@@ -406,7 +410,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight;
 				PRODUCT_NAME = "Weight Tracker";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -421,7 +425,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"weight/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Q2DS6F54X;
 				ENABLE_PREVIEWS = YES;
@@ -436,7 +440,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight;
 				PRODUCT_NAME = "Weight Tracker";
 				SWIFT_EMIT_LOC_STRINGS = YES;

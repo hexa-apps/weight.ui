@@ -73,38 +73,49 @@ func parseWeightsForHistory(weights: FetchedResults<WeightEntity>) -> [HistoryGr
     }.map { HistoryGroupModel(title: "\($0.key.year ?? 2023), \(DateFormatter().monthSymbols[($0.key.month ?? 4) - 1])", weights: $0.value) }
 }
 
-func filterWeightsForChart(weight: WeightEntity, dateRange: ClosedRange<Date>?) -> Bool {
-    if let dateRange = dateRange {
+func filterWeightsForChart(weight: WeightEntity, dateRange: ClosedRange<Date>? = nil) -> Bool {
+    if let dateRange {
         if let date = weight.time {
             return dateRange.contains(date)
         }
         return false
     }
-    return false
+    return true
 }
 
-func getDateRange(filterIndex: Int) -> ClosedRange<Date> {
+func getDateRange(filterIndex: Int) -> ClosedRange<Date>? {
+    if filterIndex == 3 {
+        return nil
+    }
     let currentCalendar = Calendar.current
     let components = currentCalendar.dateComponents([.day, .month, .year, .weekday], from: Date.now)
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "dd.MM.yyyy"
-    if filterIndex == 0 {
+    switch filterIndex {
+    case 0: // This week
         let firstDay = (components.day ?? 0) - (components.weekday ?? 0) + 2
         let lastDay = firstDay + 6
         let firstArg = dateFormatter.date(from: "\(firstDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
         let lastArg = dateFormatter.date(from: "\(lastDay).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
         return firstArg...lastArg
-    } else if filterIndex == 1 {
+    case 1: // This month
         let firstArg = dateFormatter.date(from: "01.\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
         let lastArg = dateFormatter.date(from: "\(lastDay(of: components.month ?? 11, year: components.year ?? 2022)).\(components.month ?? 11).\(components.year ?? 2022)") ?? Date.now
         return firstArg...lastArg
-    } else {
+    case 2: // Last 30 days
+        let lastArg = Date.now
+        let firstArg = currentCalendar.date(byAdding: .day, value: -30, to: lastArg) ?? Date.now
+        return firstArg...lastArg
+    default:
         return Date.now...Date.now
     }
 }
 
 func parseWeights(weights: FetchedResults<WeightEntity>, filterIndex: Int) -> LineChartData {
     let filteredWeights = weights.filter { weight in
+        if (filterIndex == 3) {
+            return filterWeightsForChart(weight: weight)
+        }
         return filterWeightsForChart(weight: weight, dateRange: getDateRange(filterIndex: filterIndex))
     }
     var weightValues = filteredWeights.map { $0.weight }
