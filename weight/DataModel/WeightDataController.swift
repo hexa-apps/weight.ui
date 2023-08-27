@@ -10,13 +10,56 @@ import CoreData
 import SwiftUI
 
 class WeightDataController: ObservableObject {
-    let container = NSPersistentContainer(name: "WeightDataModel")
-
+    static var standart = WeightDataController()
+    let container: NSPersistentContainer
+    
+    private var oldStoreURL: URL {
+        let appSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first!
+        return appSupport.appendingPathComponent("WeightDataModel.sqlite")
+    }
+    
+    private var sharedStoreURL: URL {
+        let id = "group.hexaapps.weight.coreData"
+        let groupContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: id)!
+        return groupContainer.appendingPathComponent("WeightDataModel.sqlite")
+    }
+    
     init() {
+        container = NSPersistentContainer(name: "WeightDataModel")
+        
+        if !FileManager.default.fileExists(atPath: oldStoreURL.path) {
+            container.persistentStoreDescriptions.first!.url = sharedStoreURL
+        }
+        
         container.loadPersistentStores { desc, error in
             if let error = error {
                 print("failed \(error)")
             }
+        }
+        
+        migrateStore(for: container)
+        container.viewContext.automaticallyMergesChangesFromParent = true
+    }
+    
+    func migrateStore(for migrateContainer: NSPersistentContainer) {
+        guard !FileManager.default.fileExists(atPath: sharedStoreURL.path) else { return }
+        let coordinator = migrateContainer.persistentStoreCoordinator
+        
+        guard let oldStore = coordinator.persistentStore(for: oldStoreURL) else { return }
+        
+        do {
+            try coordinator.migratePersistentStore(oldStore, to: sharedStoreURL, options: nil, withType: NSSQLiteStoreType)
+        } catch {
+            fatalError("Something went wrong while migrating the store: \(error)")
+        }
+        
+        do {
+            try FileManager.default.removeItem(at: oldStoreURL)
+        } catch {
+            fatalError("Something went wrong while deleting the old store: \(error)")
         }
     }
     

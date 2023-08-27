@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftUICharts
 import HalfASheet
+import WidgetKit
 
 struct HomeListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -123,6 +124,7 @@ struct HomeListView: View {
             }
         }
             .onAppear {
+                WidgetCenter.shared.reloadAllTimelines()
             if let lastWeightDouble = weights.last {
                 lastWeight = Int(lastWeightDouble.weight)
                 lastWeightTail = Int((lastWeightDouble.weight - Double(lastWeight)) * 10.0)
