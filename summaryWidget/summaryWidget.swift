@@ -511,6 +511,8 @@ struct OverviewWidgetEntryView: View {
                 Text("SUMMARY")
                     .font(.system(size: 11, weight: .black))
                     .foregroundColor(accentColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 Spacer()
             }
             
@@ -522,15 +524,20 @@ struct OverviewWidgetEntryView: View {
                     Text("Current Weight")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(secondaryTextColor)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                     
                     HStack(alignment: .firstTextBaseline, spacing: 2) {
                         Text(String(format: "%.1f", latest))
                             .font(.system(size: 32, weight: .black, design: .rounded))
                             .foregroundColor(primaryTextColor)
-                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                         Text(entry.unit)
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(secondaryTextColor)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                     }
                 }
                 
@@ -547,20 +554,28 @@ struct OverviewWidgetEntryView: View {
                             Text(String(format: "%.1f %@", entry.goalWeight, entry.unit))
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .foregroundColor(primaryTextColor)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         }
                         
                         if diff > 0 {
                             Text(String(format: "Left: %.1f %@", diff, entry.unit))
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(Color(red: 0.95, green: 0.3, blue: 0.3))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         } else if diff < 0 {
                             Text(String(format: "Diff: %.1f %@", abs(diff), entry.unit))
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(Color(red: 0.2, green: 0.78, blue: 0.4))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         } else {
                             Text("Goal reached!")
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(Color(red: 0.2, green: 0.78, blue: 0.4))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         }
                     }
                 }
