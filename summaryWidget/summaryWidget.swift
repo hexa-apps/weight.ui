@@ -245,22 +245,24 @@ struct CalendarDayCellView: View {
     let showWeight: Bool
     var size: CGFloat = 22
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         VStack(spacing: 3) {
             ZStack {
                 if day.day == 0 || day.isFuture {
                     Circle()
-                        .fill(Color.white.opacity(0.08))
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.05))
                         .frame(width: size, height: size)
                 } else if day.weight == nil {
                     if day.isToday {
                         Circle()
-                            .strokeBorder(Color.white.opacity(0.4), lineWidth: max(1.5, size / 10))
+                            .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.4) : Color.black.opacity(0.3), lineWidth: max(1.5, size / 10))
                             .frame(width: size, height: size)
                     } else {
                         Image(systemName: "xmark")
                             .font(.system(size: size * 0.55, weight: .black))
-                            .foregroundColor(Color.white.opacity(0.25))
+                            .foregroundColor(colorScheme == .dark ? Color.white.opacity(0.25) : Color.black.opacity(0.25))
                             .frame(width: size, height: size)
                     }
                 } else {
@@ -274,7 +276,7 @@ struct CalendarDayCellView: View {
                     if day.weight != nil || day.isFuture || day.isToday {
                         Text("\(day.day)")
                             .font(.system(size: max(8, size * 0.45), weight: day.isToday ? .bold : .semibold))
-                            .foregroundColor(day.weight != nil ? .white : Color.white.opacity(0.6))
+                            .foregroundColor(day.weight != nil ? .white : (colorScheme == .dark ? Color.white.opacity(0.6) : Color.black.opacity(0.6)))
                             .minimumScaleFactor(0.7)
                             .lineLimit(1)
                     }
@@ -302,6 +304,11 @@ struct CalendarDayCellView: View {
 struct SummaryWidgetEntryView: View {
     var entry: CalendarProvider.Entry
     @Environment(\.widgetFamily) var family
+    @Environment(\.colorScheme) var colorScheme
+    
+    private var primaryTextColor: Color { colorScheme == .dark ? .white : .black }
+    private var secondaryTextColor: Color { colorScheme == .dark ? Color.white.opacity(0.5) : Color.black.opacity(0.5) }
+    private var accentColor: Color { colorScheme == .dark ? Color(red: 0.6, green: 0.55, blue: 1.0) : Color(red: 0.4, green: 0.33, blue: 0.96) }
     
     var body: some View {
         if family == .systemSmall {
@@ -316,7 +323,7 @@ struct SummaryWidgetEntryView: View {
             // Month title (shortened, e.g. TEMMUZ)
             Text((entry.monthTitle.components(separatedBy: " ").first ?? entry.monthTitle).uppercased())
                 .font(.system(size: 12, weight: .black))
-                .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                .foregroundColor(accentColor)
             
             // Weekday headers
             HStack(spacing: 0) {
@@ -324,7 +331,7 @@ struct SummaryWidgetEntryView: View {
                 ForEach(0..<shortHeaders.count, id: \.self) { i in
                     Text(shortHeaders[i])
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                        .foregroundColor(accentColor)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -351,16 +358,16 @@ struct SummaryWidgetEntryView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(family == .systemLarge ? entry.monthTitle : "Son 7 Gün")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(primaryTextColor)
                     if family == .systemLarge {
                         HStack(spacing: 8) {
                             Label("\(entry.entryCount) kayıt", systemImage: "scalemass")
                                 .font(.system(size: 10))
-                                .foregroundColor(Color.white.opacity(0.6))
+                                .foregroundColor(secondaryTextColor)
                             if let latest = entry.latestWeight {
                                 Text(String(format: "Son: %.1f %@", latest, entry.unit))
                                     .font(.system(size: 10, weight: .medium))
-                                    .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                                    .foregroundColor(accentColor)
                             }
                         }
                     }
@@ -370,10 +377,10 @@ struct SummaryWidgetEntryView: View {
                     VStack(alignment: .trailing, spacing: 1) {
                         Text(String(format: "%.1f", latest))
                             .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                            .foregroundColor(accentColor)
                         Text(entry.unit)
                             .font(.system(size: 9, weight: .medium))
-                            .foregroundColor(Color.white.opacity(0.5))
+                            .foregroundColor(secondaryTextColor)
                     }
                 }
             }
@@ -385,7 +392,7 @@ struct SummaryWidgetEntryView: View {
                 ForEach(0..<headers.count, id: \.self) { i in
                     Text(headers[i])
                         .font(.system(size: 9, weight: .semibold))
-                        .foregroundColor(Color.white.opacity(0.5))
+                        .foregroundColor(secondaryTextColor)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -410,10 +417,10 @@ struct SummaryWidgetEntryView: View {
                         HStack(spacing: 3) {
                             Image(systemName: "flag.fill")
                                 .font(.system(size: 8))
-                                .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                                .foregroundColor(accentColor)
                             Text(String(format: "%.1f %@", entry.goalWeight, entry.unit))
                                 .font(.system(size: 9))
-                                .foregroundColor(Color.white.opacity(0.5))
+                                .foregroundColor(secondaryTextColor)
                         }
                     }
                 }
@@ -436,7 +443,21 @@ struct SummaryWidgetEntryView: View {
             Circle().fill(color).frame(width: 6, height: 6)
             Text(label)
                 .font(.system(size: 9))
-                .foregroundColor(Color.white.opacity(0.5))
+                .foregroundColor(secondaryTextColor)
+        }
+    }
+}
+
+// MARK: - Widget Background
+
+struct WidgetBackgroundView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        if colorScheme == .dark {
+            Color(red: 0.08, green: 0.08, blue: 0.12)
+        } else {
+            Color(red: 0.95, green: 0.95, blue: 0.97)
         }
     }
 }
@@ -451,12 +472,12 @@ struct summaryWidget: Widget {
             if #available(iOS 17.0, *) {
                 SummaryWidgetEntryView(entry: entry)
                     .containerBackground(for: .widget) {
-                        Color(red: 0.08, green: 0.08, blue: 0.12)
+                        WidgetBackgroundView()
                     }
             } else {
                 SummaryWidgetEntryView(entry: entry)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(red: 0.08, green: 0.08, blue: 0.12))
+                    .background(WidgetBackgroundView())
             }
         }
         .configurationDisplayName("Kilo Takvimi")
