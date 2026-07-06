@@ -52,6 +52,7 @@ struct HomeListView: View {
                     Text(String(format: "%.1f \(unit)", difference)).fontWeight(.bold).font(.title3).foregroundColor(color)
                 }
             }.padding()
+            .listRowBackground(Color.clear.background(.ultraThinMaterial))
             Section {
                 Button {
                     isSheetActive.toggle()
@@ -60,9 +61,10 @@ struct HomeListView: View {
                         Text("Add weight")
                         Spacer()
                         Image(systemName: "plus")
-                    }.padding().foregroundColor(.white)
+                    }.padding().foregroundColor(.primary)
                 }
-            }.listRowBackground(Color(0xFF3E2AD1))
+            }
+            .listRowBackground(Color.clear.background(.ultraThinMaterial))
             if weights.count > 0 {
                 Section("CHART") {
                     Menu {
@@ -121,9 +123,11 @@ struct HomeListView: View {
                             .padding(.horizontal)
                     }
                 }
+                .listRowBackground(Color.clear.background(.ultraThinMaterial))
             }
         }
-            .onAppear {
+        .hideScrollContentBackground()
+        .onAppear {
                 WidgetCenter.shared.reloadAllTimelines()
             if let lastWeightDouble = weights.last {
                 lastWeight = Int(lastWeightDouble.weight)

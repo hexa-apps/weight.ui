@@ -61,6 +61,7 @@ struct SettingsView: View {
     var body: some View {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         ZStack {
+            LiquidBackgroundView()
             VStack {
                 TitleComponent(title: "Settings")
                 List {
@@ -102,6 +103,7 @@ struct SettingsView: View {
 
                         }
                     }
+                    .listRowBackground(Color.clear.background(.ultraThinMaterial))
                     Section("SETTINGS") {
                         Section {
                             Toggle("Reminder", isOn: $reminderCheck).onChange(of: reminderCheck) { newValue in
@@ -163,6 +165,7 @@ struct SettingsView: View {
                             }
                         }
                     }
+                    .listRowBackground(Color.clear.background(.ultraThinMaterial))
                     Section("DATA") {
                         Section {
                             SettingButton(title: "🗑 Clear History") {
@@ -193,6 +196,7 @@ struct SettingsView: View {
                                 .foregroundColor(light: .black, dark: .white)
                         }
                     }
+                    .listRowBackground(Color.clear.background(.ultraThinMaterial))
                     Section("ABOUT") {
                         Section {
                             SettingButton(title: "📪 Suggestions") {
@@ -223,10 +227,14 @@ struct SettingsView: View {
                             }.foregroundColor(light: .black.opacity(0.75), dark: .white)
                         }
                     }
+                    .listRowBackground(Color.clear.background(.ultraThinMaterial))
                     Section {
                         Text("Weight Tracker \(appVersion ?? "")").font(.callout).frame(maxWidth: .infinity, alignment: .center)
                     }.listRowBackground(Color.clear)
                 }
+                .hideScrollContentBackground()
+                .listStyle(.insetGrouped)
+                .environment(\.defaultMinListRowHeight, 50)
                     .fileExporter(isPresented: $isExporting, document: exportCSVDocument(weights: weights), contentType: .plainText, defaultFilename: getCSVTitle()) { result in
                         
                 }

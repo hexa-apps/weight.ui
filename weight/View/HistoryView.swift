@@ -24,8 +24,11 @@ struct HistoryView: View {
     @State private var weightID: UUID?
 
     var body: some View {
-        VStack {
-            TitleComponent(title: "History")
+        ZStack {
+            LiquidBackgroundView()
+            
+            VStack {
+                TitleComponent(title: "History")
             ZStack(alignment: .bottomTrailing) {
                 List {
                     if weights.count > 0 {
@@ -44,17 +47,21 @@ struct HistoryView: View {
                                         isSheetActive.toggle()
                                     } label: {
                                         HistoryCard(weight: weight, unit: unit)
-                                            .padding(.all, 4)
                                             .foregroundColor(light: .black, dark: .white)
                                     }
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
                                 }
                             }
                         }
 
                     } else {
                         Text("No data")
+                            .listRowBackground(Color.clear)
                     }
-                }.listStyle(.insetGrouped)
+                }
+                .listStyle(.plain)
+                .hideScrollContentBackground()
                 Button {
                     isEdit = false
                     date = Date()
@@ -67,8 +74,10 @@ struct HistoryView: View {
                         .padding(.bottom, 36)
                         .padding(.trailing, 36)
                 }
+                }
             }
-        }.sheet(isPresented: $isSheetActive) {
+        }
+        .sheet(isPresented: $isSheetActive) {
             ZStack {
                 VStack {
                     Section {

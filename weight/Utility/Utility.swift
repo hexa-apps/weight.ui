@@ -233,3 +233,84 @@ func exportCSVDocument(weights: FetchedResults<WeightEntity>) -> CSVDocument {
     }
     return CSVDocument(content: content)
 }
+
+// MARK: - Liquid Glass Components
+
+struct LiquidBackgroundView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @State private var animate = false
+    
+    var body: some View {
+        ZStack {
+            // Base background
+            if colorScheme == .dark {
+                Color(red: 0.05, green: 0.05, blue: 0.1)
+            } else {
+                Color(red: 0.98, green: 0.96, blue: 0.99)
+            }
+            
+            // Organic blobs
+            GeometryReader { geometry in
+                let width = geometry.size.width
+                let height = geometry.size.height
+                
+                Circle()
+                    .fill(Color(red: 0.4, green: 0.33, blue: 0.96).opacity(colorScheme == .dark ? 0.4 : 0.5))
+                    .frame(width: width * 0.8)
+                    .offset(x: animate ? width * 0.1 : -width * 0.2, y: animate ? -height * 0.1 : -height * 0.2)
+                    .blur(radius: 60)
+                
+                Circle()
+                    .fill(Color(red: 0.95, green: 0.3, blue: 0.5).opacity(colorScheme == .dark ? 0.3 : 0.4))
+                    .frame(width: width * 0.9)
+                    .offset(x: animate ? width * 0.2 : width * 0.4, y: animate ? height * 0.4 : height * 0.3)
+                    .blur(radius: 80)
+                
+                Circle()
+                    .fill(Color(red: 0.2, green: 0.78, blue: 0.9).opacity(colorScheme == .dark ? 0.2 : 0.4))
+                    .frame(width: width * 0.7)
+                    .offset(x: animate ? -width * 0.1 : -width * 0.3, y: animate ? height * 0.7 : height * 0.5)
+                    .blur(radius: 70)
+            }
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            withAnimation(.easeInOut(duration: 10).repeatForever(autoreverses: true)) {
+                animate.toggle()
+            }
+        }
+    }
+}
+
+struct LiquidGlassModifier: ViewModifier {
+    var cornerRadius: CGFloat = 16
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .background(.ultraThinMaterial)
+            .cornerRadius(cornerRadius)
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(Color.white.opacity(colorScheme == .dark ? 0.1 : 0.4), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: 10, x: 0, y: 5)
+    }
+}
+
+extension View {
+    func liquidGlass(cornerRadius: CGFloat = 16) -> some View {
+        self.modifier(LiquidGlassModifier(cornerRadius: cornerRadius))
+    }
+    
+    @ViewBuilder
+    func hideScrollContentBackground() -> some View {
+        if #available(iOS 16.0, *) {
+            self.scrollContentBackground(.hidden)
+        } else {
+            self.onAppear {
+                UITableView.appearance().backgroundColor = .clear
+            }
+        }
+    }
+}

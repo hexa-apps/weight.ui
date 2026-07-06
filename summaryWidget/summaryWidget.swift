@@ -454,10 +454,41 @@ struct WidgetBackgroundView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        if colorScheme == .dark {
-            Color(red: 0.08, green: 0.08, blue: 0.12)
-        } else {
-            Color(red: 0.95, green: 0.95, blue: 0.97)
+        ZStack {
+            // Base background
+            if colorScheme == .dark {
+                Color(red: 0.05, green: 0.05, blue: 0.1)
+            } else {
+                Color(red: 0.98, green: 0.96, blue: 0.99)
+            }
+            
+            // Organic blobs
+            GeometryReader { geometry in
+                let width = geometry.size.width
+                let height = geometry.size.height
+                
+                Circle()
+                    .fill(Color(red: 0.4, green: 0.33, blue: 0.96).opacity(colorScheme == .dark ? 0.5 : 0.6))
+                    .frame(width: width * 0.9)
+                    .offset(x: -width * 0.2, y: -height * 0.2)
+                    .blur(radius: 40)
+                
+                Circle()
+                    .fill(Color(red: 0.95, green: 0.3, blue: 0.5).opacity(colorScheme == .dark ? 0.4 : 0.5))
+                    .frame(width: width * 1.0)
+                    .offset(x: width * 0.3, y: height * 0.4)
+                    .blur(radius: 50)
+                
+                Circle()
+                    .fill(Color(red: 0.2, green: 0.78, blue: 0.9).opacity(colorScheme == .dark ? 0.3 : 0.5))
+                    .frame(width: width * 0.8)
+                    .offset(x: -width * 0.1, y: height * 0.6)
+                    .blur(radius: 40)
+            }
+            
+            // Glass overlay
+            Rectangle()
+                .fill(.ultraThinMaterial)
         }
     }
 }
