@@ -26,7 +26,5 @@ struct HistoryCard: View {
             Image(systemName: "chevron.right")
                 .padding(.trailing, 8)
         }
-        .padding()
-        .liquidGlass()
     }
 }

@@ -52,19 +52,7 @@ struct HomeListView: View {
                     Text(String(format: "%.1f \(unit)", difference)).fontWeight(.bold).font(.title3).foregroundColor(color)
                 }
             }.padding()
-            .listRowBackground(Color.clear.background(.ultraThinMaterial))
-            Section {
-                Button {
-                    isSheetActive.toggle()
-                } label: {
-                    HStack {
-                        Text("Add weight")
-                        Spacer()
-                        Image(systemName: "plus")
-                    }.padding().foregroundColor(.primary)
-                }
-            }
-            .listRowBackground(Color.clear.background(.ultraThinMaterial))
+
             if weights.count > 0 {
                 Section("CHART") {
                     Menu {
@@ -123,10 +111,9 @@ struct HomeListView: View {
                             .padding(.horizontal)
                     }
                 }
-                .listRowBackground(Color.clear.background(.ultraThinMaterial))
             }
+            Color.clear.frame(height: 100).listRowBackground(Color.clear)
         }
-        .hideScrollContentBackground()
         .onAppear {
                 WidgetCenter.shared.reloadAllTimelines()
             if let lastWeightDouble = weights.last {
@@ -213,6 +200,9 @@ struct HomeListView: View {
                     .height(.fixed(320))
                     .disableDragToDismiss
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ShowHomeAddSheet"))) { _ in
+            isSheetActive = true
         }
     }
 

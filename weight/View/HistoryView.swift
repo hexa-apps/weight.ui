@@ -24,11 +24,8 @@ struct HistoryView: View {
     @State private var weightID: UUID?
 
     var body: some View {
-        ZStack {
-            LiquidBackgroundView()
-            
-            VStack {
-                TitleComponent(title: "History")
+        VStack {
+            TitleComponent(title: "History")
             ZStack(alignment: .bottomTrailing) {
                 List {
                     if weights.count > 0 {
@@ -47,37 +44,20 @@ struct HistoryView: View {
                                         isSheetActive.toggle()
                                     } label: {
                                         HistoryCard(weight: weight, unit: unit)
+                                            .padding(.all, 4)
                                             .foregroundColor(light: .black, dark: .white)
                                     }
-                                    .listRowBackground(Color.clear)
-                                    .listRowSeparator(.hidden)
                                 }
                             }
                         }
-
                     } else {
                         Text("No data")
-                            .listRowBackground(Color.clear)
                     }
+                    Color.clear.frame(height: 100).listRowBackground(Color.clear)
                 }
-                .listStyle(.plain)
-                .hideScrollContentBackground()
-                Button {
-                    isEdit = false
-                    date = Date()
-                    isSheetActive.toggle()
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 48, height: 48)
-                        .foregroundColor(light: Color(0xFF3E2AD1), dark: Color(0xFF6753F4))
-                        .padding(.bottom, 36)
-                        .padding(.trailing, 36)
-                }
-                }
+                .listStyle(.insetGrouped)
             }
-        }
-        .sheet(isPresented: $isSheetActive) {
+        }.sheet(isPresented: $isSheetActive) {
             ZStack {
                 VStack {
                     Section {
@@ -191,6 +171,11 @@ struct HistoryView: View {
                     }
                 }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ShowHistoryAddSheet"))) { _ in
+            isEdit = false
+            date = Date()
+            isSheetActive = true
         }
     }
 }
