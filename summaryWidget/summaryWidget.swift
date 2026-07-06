@@ -17,6 +17,7 @@ struct CalendarDay: Identifiable {
     let weight: Double?
     let trend: TrendDirection
     let isToday: Bool
+    let isFuture: Bool
 }
 
 enum TrendDirection {
@@ -139,7 +140,7 @@ struct CalendarProvider: TimelineProvider {
         var allDays: [CalendarDay] = []
         // Leading empty cells
         for _ in 0..<startOffset {
-            allDays.append(CalendarDay(day: 0, weight: nil, trend: .none, isToday: false))
+            allDays.append(CalendarDay(day: 0, weight: nil, trend: .none, isToday: false, isFuture: false))
         }
         // Actual days
         var lastKnownWeight = prevWeight
@@ -159,13 +160,14 @@ struct CalendarProvider: TimelineProvider {
                 lastKnownWeight = w
             }
             let today = isCurrentMonth && day == todayDay
-            allDays.append(CalendarDay(day: day, weight: weight, trend: trend, isToday: today))
+            let isFuture = isCurrentMonth ? day > todayDay : (monthComponents.year! > todayYear || (monthComponents.year == todayYear && monthComponents.month! > todayMonth))
+            allDays.append(CalendarDay(day: day, weight: weight, trend: trend, isToday: today, isFuture: isFuture))
         }
         // Trailing empty cells to fill last row
         let remainder = allDays.count % 7
         if remainder > 0 {
             for _ in 0..<(7 - remainder) {
-                allDays.append(CalendarDay(day: 0, weight: nil, trend: .none, isToday: false))
+                allDays.append(CalendarDay(day: 0, weight: nil, trend: .none, isToday: false, isFuture: false))
             }
         }
         // Split into rows
@@ -218,7 +220,7 @@ struct CalendarProvider: TimelineProvider {
             let isToday = (i == 0)
             let wd = calendar.component(.weekday, from: targetDate)
             weeklyHeaders.append(headersMap[wd] ?? "")
-            weeklyRow.append(CalendarDay(day: dayNum, weight: weight, trend: trend, isToday: isToday))
+            weeklyRow.append(CalendarDay(day: dayNum, weight: weight, trend: trend, isToday: isToday, isFuture: false))
         }
         
         return WeightCalendarEntry(
@@ -241,57 +243,57 @@ struct CalendarProvider: TimelineProvider {
 struct CalendarDayCellView: View {
     let day: CalendarDay
     let showWeight: Bool
-    
-    private var dayTextColor: Color {
-        if day.isToday { return .white }
-        if day.weight != nil { return day.trend.color }
-        return Color.white.opacity(0.4)
-    }
+    var size: CGFloat = 22
     
     var body: some View {
-        if day.day == 0 {
-            Color.clear
-                .frame(maxWidth: .infinity, minHeight: 28)
-        } else {
-            VStack(spacing: 1) {
-                ZStack {
-                    // Today highlight
+        VStack(spacing: 3) {
+            ZStack {
+                if day.day == 0 || day.isFuture {
+                    Circle()
+                        .fill(Color.white.opacity(0.08))
+                        .frame(width: size, height: size)
+                } else if day.weight == nil {
                     if day.isToday {
                         Circle()
-                            .fill(Color(red: 0.4, green: 0.33, blue: 0.96))
-                            .frame(width: 24, height: 24)
+                            .strokeBorder(Color.white.opacity(0.4), lineWidth: max(1.5, size / 10))
+                            .frame(width: size, height: size)
+                    } else {
+                        Image(systemName: "xmark")
+                            .font(.system(size: size * 0.55, weight: .black))
+                            .foregroundColor(Color.white.opacity(0.25))
+                            .frame(width: size, height: size)
                     }
-                    // Entry background (non-today)
-                    else if day.weight != nil {
-                        Circle()
-                            .fill(day.trend.color.opacity(0.25))
-                            .frame(width: 24, height: 24)
-                    }
-                    
-                    Text("\(day.day)")
-                        .font(.system(size: 11, weight: day.isToday ? .bold : (day.weight != nil ? .semibold : .regular)))
-                        .foregroundColor(dayTextColor)
-                }
-                
-                // Trend dot
-                if day.weight != nil {
+                } else {
                     Circle()
                         .fill(day.trend.color)
-                        .frame(width: 4, height: 4)
-                } else {
-                    Spacer().frame(height: 4)
+                        .frame(width: size, height: size)
                 }
                 
-                // Weight value (large widget only)
-                if showWeight, let w = day.weight {
-                    Text(String(format: "%.0f", w))
-                        .font(.system(size: 7, weight: .medium))
-                        .foregroundColor(day.trend.color)
-                        .lineLimit(1)
+                // Day number overlay
+                if day.day > 0 {
+                    if day.weight != nil || day.isFuture || day.isToday {
+                        Text("\(day.day)")
+                            .font(.system(size: max(8, size * 0.45), weight: day.isToday ? .bold : .semibold))
+                            .foregroundColor(day.weight != nil ? .white : Color.white.opacity(0.6))
+                            .minimumScaleFactor(0.7)
+                            .lineLimit(1)
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: showWeight ? 42 : 32)
+            
+            if showWeight {
+                if let w = day.weight {
+                    Text(String(format: "%.0f", w))
+                        .font(.system(size: 8, weight: .semibold))
+                        .foregroundColor(day.trend.color)
+                        .lineLimit(1)
+                } else {
+                    Text(" ")
+                        .font(.system(size: 8))
+                }
+            }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -302,6 +304,47 @@ struct SummaryWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     
     var body: some View {
+        if family == .systemSmall {
+            smallWidgetView
+        } else {
+            regularWidgetView
+        }
+    }
+    
+    var smallWidgetView: some View {
+        VStack(spacing: 6) {
+            // Month title (shortened, e.g. TEMMUZ)
+            Text((entry.monthTitle.components(separatedBy: " ").first ?? entry.monthTitle).uppercased())
+                .font(.system(size: 12, weight: .black))
+                .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+            
+            // Weekday headers
+            HStack(spacing: 0) {
+                let shortHeaders = entry.weekdayHeaders.map { String($0.prefix(1)) }
+                ForEach(0..<shortHeaders.count, id: \.self) { i in
+                    Text(shortHeaders[i])
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(Color(red: 0.6, green: 0.55, blue: 1.0))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.bottom, 2)
+            
+            // Grid
+            VStack(spacing: 4) {
+                ForEach(0..<entry.calendarRows.count, id: \.self) { rowIndex in
+                    HStack(spacing: 0) {
+                        ForEach(entry.calendarRows[rowIndex]) { day in
+                            CalendarDayCellView(day: day, showWeight: false, size: 14)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+    }
+    
+    var regularWidgetView: some View {
         VStack(spacing: 4) {
             // Header
             HStack(alignment: .center) {
@@ -352,7 +395,7 @@ struct SummaryWidgetEntryView: View {
                 ForEach(0..<entry.calendarRows.count, id: \.self) { rowIndex in
                     HStack(spacing: 0) {
                         ForEach(entry.calendarRows[rowIndex]) { day in
-                            CalendarDayCellView(day: day, showWeight: true)
+                            CalendarDayCellView(day: day, showWeight: true, size: 20)
                         }
                     }
                 }
@@ -379,7 +422,7 @@ struct SummaryWidgetEntryView: View {
                 Spacer(minLength: 8)
                 HStack(spacing: 0) {
                     ForEach(entry.weeklyRow) { day in
-                        CalendarDayCellView(day: day, showWeight: true)
+                        CalendarDayCellView(day: day, showWeight: true, size: 30)
                     }
                 }
                 Spacer(minLength: 4)
@@ -418,7 +461,7 @@ struct summaryWidget: Widget {
         }
         .configurationDisplayName("Kilo Takvimi")
         .description("Aylık kilo kayıtlarınızı takvim görünümünde takip edin.")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
 
@@ -438,6 +481,8 @@ struct summaryWidget_Previews: PreviewProvider {
             goalWeight: 72.0,
             entryCount: 5
         )
+        SummaryWidgetEntryView(entry: entry)
+            .previewContext(WidgetPreviewContext(family: .systemSmall))
         SummaryWidgetEntryView(entry: entry)
             .previewContext(WidgetPreviewContext(family: .systemMedium))
         SummaryWidgetEntryView(entry: entry)
