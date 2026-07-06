@@ -67,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F02A8FAF2FFBA00A00BFE54B /* summaryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = summaryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		F02D632A28F758D00086849A /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		F03F604D28DE510A00BD139E /* HistoryGroupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGroupModel.swift; sourceTree = "<group>"; };
 		F042C3C628B4F5B50056D722 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -138,6 +139,7 @@
 		F04EBDB2288E99C60097E42F = {
 			isa = PBXGroup;
 			children = (
+				F02A8FAF2FFBA00A00BFE54B /* summaryWidgetExtension.entitlements */,
 				F04EBDBD288E99C60097E42F /* weight */,
 				F08F47D22A6F1990006F8265 /* summaryWidget */,
 				F04EBDBC288E99C60097E42F /* Products */,
@@ -574,8 +576,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = summaryWidget/summaryWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = 5Q2DS6F54X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = summaryWidget/Info.plist;
@@ -587,7 +590,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight.summaryWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -603,8 +606,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = summaryWidget/summaryWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = 5Q2DS6F54X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = summaryWidget/Info.plist;
@@ -616,7 +620,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hexaapps.weight.summaryWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

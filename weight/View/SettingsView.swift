@@ -8,6 +8,7 @@
 import SwiftUI
 import HalfASheet
 import SwiftCSV
+import WidgetKit
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -93,6 +94,10 @@ struct SettingsView: View {
                                     }
                                 }.pickerStyle(.segmented)
                                     .fixedSize()
+                                    .onChange(of: unit) { newValue in
+                                        WeightDataController.sharedDefaults.set(newValue, forKey: "weightUnit")
+                                        WidgetCenter.shared.reloadAllTimelines()
+                                    }
                             }
 
                         }
@@ -242,10 +247,12 @@ struct SettingsView: View {
                     ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
                         goal = newValue
                         UserDefaults.standard.set(goal, forKey: "goal")
+                        WeightDataController.sharedDefaults.set(goal, forKey: "goal")
                     }
                     ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
                         goalTail = newValue
                         UserDefaults.standard.set(goalTail, forKey: "goalTail")
+                        WeightDataController.sharedDefaults.set(goalTail, forKey: "goalTail")
                     }
                 }
             }

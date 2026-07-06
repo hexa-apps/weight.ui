@@ -199,10 +199,12 @@ struct OnboardingView: View {
                                 ResizeablePicker(selection: $current, data: Array(0..<770)).onChange(of: current) { newValue in
                                     current = newValue
                                     UserDefaults.standard.set(current, forKey: "current")
+                                    WeightDataController.sharedDefaults.set(current, forKey: "current")
                                 }
                                 ResizeablePicker(selection: $currentTail, data: Array(0..<10)).onChange(of: currentTail) { newValue in
                                     currentTail = newValue
                                     UserDefaults.standard.set(currentTail, forKey: "currentTail")
+                                    WeightDataController.sharedDefaults.set(currentTail, forKey: "currentTail")
                                 }
                             }
                         }
@@ -251,7 +253,10 @@ struct OnboardingView: View {
                         let weight = Double(current) + (Double(currentTail) * 0.1)
                         UserDefaults.standard.set(goal, forKey: "goal")
                         UserDefaults.standard.set(goalTail, forKey: "goalTail")
-                        WeightDataController().add(weight: weight, when: date, context: managedObjectContext)
+                        WeightDataController.sharedDefaults.set(goal, forKey: "goal")
+                        WeightDataController.sharedDefaults.set(goalTail, forKey: "goalTail")
+                        WeightDataController.sharedDefaults.set(unit, forKey: "weightUnit")
+                        WeightDataController.standard.add(weight: weight, when: date, context: managedObjectContext)
                         onboardingShow.toggle()
                         let center = UNUserNotificationCenter.current()
                         center.getNotificationSettings { settings in

@@ -8,31 +8,49 @@
 import Foundation
 import CoreData
 import SwiftUI
+import WidgetKit
 
 class WeightDataController: ObservableObject {
-    static var standart = WeightDataController()
+    static let standard = WeightDataController()
     let container: NSPersistentContainer
     
-    private var oldStoreURL: URL {
-        let appSupport = FileManager.default.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        ).first!
-        return appSupport.appendingPathComponent("WeightDataModel.sqlite")
+    static let appGroupID = "group.hexaapps.weight.coreData"
+    
+    static var sharedStoreURL: URL {
+        let groupContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)!
+        return groupContainer.appendingPathComponent("WeightDataModel.sqlite")
     }
     
-    private var sharedStoreURL: URL {
-        let id = "group.hexaapps.weight.coreData"
-        let groupContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: id)!
-        return groupContainer.appendingPathComponent("WeightDataModel.sqlite")
+    /// Shared UserDefaults accessible from both app and widget
+    static var sharedDefaults: UserDefaults {
+        UserDefaults(suiteName: appGroupID) ?? .standard
     }
     
     init() {
         container = NSPersistentContainer(name: "WeightDataModel")
         
-        if !FileManager.default.fileExists(atPath: oldStoreURL.path) {
-            container.persistentStoreDescriptions.first!.url = sharedStoreURL
+        // Migrate old store to shared App Group location if needed
+        let oldStoreURL = NSPersistentContainer.defaultDirectoryURL()
+            .appendingPathComponent("WeightDataModel.sqlite")
+        let sharedURL = WeightDataController.sharedStoreURL
+        
+        if FileManager.default.fileExists(atPath: oldStoreURL.path) &&
+            !FileManager.default.fileExists(atPath: sharedURL.path) {
+            let coordinator = NSPersistentStoreCoordinator(
+                managedObjectModel: container.managedObjectModel
+            )
+            do {
+                let oldStore = try coordinator.addPersistentStore(type: .sqlite, at: oldStoreURL)
+                try coordinator.migratePersistentStore(oldStore, to: sharedURL, type: .sqlite)
+                print("Core Data migrated to shared store")
+            } catch {
+                print("Migration failed: \(error)")
+            }
         }
+        
+        // Use shared App Group store so widget can access data
+        let storeDescription = NSPersistentStoreDescription(url: sharedURL)
+        container.persistentStoreDescriptions = [storeDescription]
         
         container.loadPersistentStores { desc, error in
             if let error = error {
@@ -40,33 +58,14 @@ class WeightDataController: ObservableObject {
             }
         }
         
-        migrateStore(for: container)
         container.viewContext.automaticallyMergesChangesFromParent = true
-    }
-    
-    func migrateStore(for migrateContainer: NSPersistentContainer) {
-        guard !FileManager.default.fileExists(atPath: sharedStoreURL.path) else { return }
-        let coordinator = migrateContainer.persistentStoreCoordinator
-        
-        guard let oldStore = coordinator.persistentStore(for: oldStoreURL) else { return }
-        
-        do {
-            try coordinator.migratePersistentStore(oldStore, to: sharedStoreURL, options: nil, withType: NSSQLiteStoreType)
-        } catch {
-            fatalError("Something went wrong while migrating the store: \(error)")
-        }
-        
-        do {
-            try FileManager.default.removeItem(at: oldStoreURL)
-        } catch {
-            fatalError("Something went wrong while deleting the old store: \(error)")
-        }
     }
     
     func save(context: NSManagedObjectContext) {
         do {
             try context.save()
             print("data saved")
+            WidgetCenter.shared.reloadAllTimelines()
         } catch {
             print("error")
         }
