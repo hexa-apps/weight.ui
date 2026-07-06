@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftUICharts
-import HalfASheet
 import WidgetKit
 
 struct HomeListView: View {
@@ -187,18 +186,31 @@ struct HomeListView: View {
                 }.onAppear {
                     date = Date()
                 }
-                HalfASheet(isPresented: $isAddAlertActive, title: "Current Weight (\(unit))") {
-                    HStack(spacing: 0) {
-                        ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
-                            lastWeight = newValue
+                .sheet(isPresented: $isAddAlertActive) {
+                    VStack {
+                        HStack {
+                            Text("Current Weight (\(unit))")
+                                .font(.headline)
+                            Spacer()
+                            Button {
+                                isAddAlertActive = false
+                            } label: {
+                                Text("Done").fontWeight(.bold)
+                            }
                         }
-                        ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
-                            lastWeightTail = newValue
+                        .padding()
+                        
+                        HStack(spacing: 0) {
+                            ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
+                                lastWeight = newValue
+                            }
+                            ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
+                                lastWeightTail = newValue
+                            }
                         }
                     }
+                    .presentationDetentsIfAvailable()
                 }
-                    .height(.fixed(320))
-                    .disableDragToDismiss
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ShowHomeAddSheet"))) { _ in

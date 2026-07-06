@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import HalfASheet
+import WidgetKit
 
 struct HistoryView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -129,6 +129,7 @@ struct HistoryView: View {
                                     }
                                     if managedObjectContext.hasChanges {
                                         try? managedObjectContext.save()
+                                        WidgetCenter.shared.reloadAllTimelines()
                                     }
                                 }
                                 isEdit = false
@@ -147,26 +148,39 @@ struct HistoryView: View {
                 }.onAppear {
                     date = date
                 }
-                HalfASheet(isPresented: $isAddAlertActive, title: "Current Weight (\(unit))") {
-                    HStack(spacing: 0) {
-                        ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
-                            lastWeight = newValue
+                .sheet(isPresented: $isAddAlertActive) {
+                    VStack {
+                        HStack {
+                            Text("Current Weight (\(unit))")
+                                .font(.headline)
+                            Spacer()
+                            Button {
+                                isAddAlertActive = false
+                            } label: {
+                                Text("Done").fontWeight(.bold)
+                            }
                         }
-                        ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
-                            lastWeightTail = newValue
+                        .padding()
+                        
+                        HStack(spacing: 0) {
+                            ResizeablePicker(selection: $lastWeight, data: Array(0..<770)).onChange(of: lastWeight) { newValue in
+                                lastWeight = newValue
+                            }
+                            ResizeablePicker(selection: $lastWeightTail, data: Array(0..<10)).onChange(of: lastWeightTail) { newValue in
+                                lastWeightTail = newValue
+                            }
                         }
                     }
-                }
-                    .height(.fixed(320))
-                    .disableDragToDismiss
+                    .presentationDetentsIfAvailable()
                     .onAppear {
-                    if !isEdit {
-                        if let weight = weights.last {
-                            lastWeight = Int(weight.weight)
-                            lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
-                        } else {
-                            lastWeight = UserDefaults.standard.integer(forKey: "goal")
-                            lastWeightTail = UserDefaults.standard.integer(forKey: "goalTail")
+                        if !isEdit {
+                            if let weight = weights.last {
+                                lastWeight = Int(weight.weight)
+                                lastWeightTail = Int(String(weight.weight).suffix(1)) ?? 0
+                            } else {
+                                lastWeight = UserDefaults.standard.integer(forKey: "goal")
+                                lastWeightTail = UserDefaults.standard.integer(forKey: "goalTail")
+                            }
                         }
                     }
                 }

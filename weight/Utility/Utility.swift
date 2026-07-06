@@ -259,4 +259,13 @@ extension View {
             }
         }
     }
+    
+    @ViewBuilder
+    func presentationDetentsIfAvailable() -> some View {
+        if #available(iOS 16.0, *) {
+            self.presentationDetents([.height(320)])
+        } else {
+            self
+        }
+    }
 }

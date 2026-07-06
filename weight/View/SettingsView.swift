@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import HalfASheet
 import SwiftCSV
 import WidgetKit
 
@@ -179,6 +178,7 @@ struct SettingsView: View {
                                         }
                                         if managedObjectContext.hasChanges {
                                             try? managedObjectContext.save()
+                                            WidgetCenter.shared.reloadAllTimelines()
                                         }
                                     },
                                     secondaryButton: .cancel(Text("Cancel")))
@@ -245,22 +245,37 @@ struct SettingsView: View {
                 }
 
             }
-            HalfASheet(isPresented: $goalAlertActive, title: "Goal Weight (\(unit))") {
-                HStack(spacing: 0) {
-                    ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
-                        goal = newValue
-                        UserDefaults.standard.set(goal, forKey: "goal")
-                        WeightDataController.sharedDefaults.set(goal, forKey: "goal")
+            .sheet(isPresented: $goalAlertActive) {
+                VStack {
+                    HStack {
+                        Text("Goal Weight (\(unit))")
+                            .font(.headline)
+                        Spacer()
+                        Button {
+                            goalAlertActive = false
+                        } label: {
+                            Text("Done").fontWeight(.bold)
+                        }
                     }
-                    ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
-                        goalTail = newValue
-                        UserDefaults.standard.set(goalTail, forKey: "goalTail")
-                        WeightDataController.sharedDefaults.set(goalTail, forKey: "goalTail")
+                    .padding()
+                    
+                    HStack(spacing: 0) {
+                        ResizeablePicker(selection: $goal, data: Array(0..<770)).onChange(of: goal) { newValue in
+                            goal = newValue
+                            UserDefaults.standard.set(goal, forKey: "goal")
+                            WeightDataController.sharedDefaults.set(goal, forKey: "goal")
+                            WidgetCenter.shared.reloadAllTimelines()
+                        }
+                        ResizeablePicker(selection: $goalTail, data: Array(0..<10)).onChange(of: goalTail) { newValue in
+                            goalTail = newValue
+                            UserDefaults.standard.set(goalTail, forKey: "goalTail")
+                            WeightDataController.sharedDefaults.set(goalTail, forKey: "goalTail")
+                            WidgetCenter.shared.reloadAllTimelines()
+                        }
                     }
                 }
+                .presentationDetentsIfAvailable()
             }
-                .height(.fixed(320))
-                .disableDragToDismiss
         }
     }
 

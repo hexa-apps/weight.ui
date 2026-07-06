@@ -47,7 +47,7 @@ struct ContentView: View {
                 .padding(.vertical, 8)
                 .background(
                     Group {
-                        if #available(iOS 26.0, *) {
+                        if #available(iOS 16.0, *) {
                             VisualEffectBlur(blurStyle: .systemThinMaterial)
                         } else {
                             Capsule().fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
@@ -69,7 +69,7 @@ struct ContentView: View {
                     }
                 }) {
                     let isIOS26: Bool = {
-                        if #available(iOS 26.0, *) { return true }
+                        if #available(iOS 16.0, *) { return true }
                         return false
                     }()
                     
@@ -80,7 +80,7 @@ struct ContentView: View {
                         .padding(8)
                         .background(
                             Group {
-                                if #available(iOS 26.0, *) {
+                                if #available(iOS 16.0, *) {
                                     VisualEffectBlur(blurStyle: .systemThinMaterial)
                                 } else {
                                     Circle().fill(colorScheme == .dark ? Color(0xFF6753F4) : Color(0xFF3E2AD1))

@@ -26,29 +26,35 @@ class WeightDataController: ObservableObject {
         UserDefaults(suiteName: appGroupID) ?? .standard
     }
     
+    private var oldStoreURL: URL {
+        let appSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first!
+        return appSupport.appendingPathComponent("WeightDataModel.sqlite")
+    }
+    
     init() {
         container = NSPersistentContainer(name: "WeightDataModel")
         
-        // Migrate old store to shared App Group location if needed
-        let oldStoreURL = NSPersistentContainer.defaultDirectoryURL()
-            .appendingPathComponent("WeightDataModel.sqlite")
         let sharedURL = WeightDataController.sharedStoreURL
         
-        if FileManager.default.fileExists(atPath: oldStoreURL.path) &&
-            !FileManager.default.fileExists(atPath: sharedURL.path) {
-            let coordinator = NSPersistentStoreCoordinator(
-                managedObjectModel: container.managedObjectModel
-            )
+        if FileManager.default.fileExists(atPath: oldStoreURL.path) {
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: container.managedObjectModel)
             do {
                 let oldStore = try coordinator.addPersistentStore(type: .sqlite, at: oldStoreURL)
-                try coordinator.migratePersistentStore(oldStore, to: sharedURL, type: .sqlite)
-                print("Core Data migrated to shared store")
+                try coordinator.migratePersistentStore(oldStore, to: sharedURL, options: nil, withType: NSSQLiteStoreType)
+                print("Core Data migrated to shared store successfully")
+                
+                let fileManager = FileManager.default
+                try? fileManager.removeItem(at: oldStoreURL)
+                try? fileManager.removeItem(at: oldStoreURL.deletingPathExtension().appendingPathComponent("WeightDataModel.sqlite-wal"))
+                try? fileManager.removeItem(at: oldStoreURL.deletingPathExtension().appendingPathComponent("WeightDataModel.sqlite-shm"))
             } catch {
                 print("Migration failed: \(error)")
             }
         }
         
-        // Use shared App Group store so widget can access data
         let storeDescription = NSPersistentStoreDescription(url: sharedURL)
         container.persistentStoreDescriptions = [storeDescription]
         
@@ -94,7 +100,7 @@ class WeightDataController: ObservableObject {
     private func update(weightEntity: WeightEntity, weight: Double, context: NSManagedObjectContext) {
         context.performAndWait {
             weightEntity.weight = weight
-            try? context.save()
+            self.save(context: context)
         }
     }
     
