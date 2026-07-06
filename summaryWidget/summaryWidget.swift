@@ -98,23 +98,24 @@ struct CalendarProvider: TimelineProvider {
         let monthComponents = calendar.dateComponents([.year, .month], from: date)
         let firstOfMonth = calendar.date(from: monthComponents)!
         let daysInMonth = calendar.range(of: .day, in: .month, for: firstOfMonth)!.count
-        let firstWeekday = calendar.component(.weekday, from: firstOfMonth)
-        // Monday-start offset: Sunday=1 → offset 6, Monday=2 → offset 0, etc.
-        let startOffset = (firstWeekday + 5) % 7
+        let monthFirstWeekday = calendar.component(.weekday, from: firstOfMonth)
+        let startOffset = (monthFirstWeekday - calendar.firstWeekday + 7) % 7
         
         let todayDay = calendar.component(.day, from: date)
         let todayMonth = calendar.component(.month, from: date)
         let todayYear = calendar.component(.year, from: date)
         let isCurrentMonth = (monthComponents.month == todayMonth && monthComponents.year == todayYear)
         
-        // Month title
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
         formatter.dateFormat = "LLLL yyyy"
         let monthTitle = formatter.string(from: date).capitalized
         
-        // Weekday headers (Monday first)
-        let weekdayHeaders = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"]
+        let shortSymbols = formatter.shortWeekdaySymbols ?? ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+        var weekdayHeaders: [String] = []
+        for i in 0..<7 {
+            let index = (calendar.firstWeekday - 1 + i) % 7
+            weekdayHeaders.append(shortSymbols[index])
+        }
         
         // Map weights by day for this month
         var weightByDay: [Int: Double] = [:]
@@ -197,7 +198,6 @@ struct CalendarProvider: TimelineProvider {
         }
         
         var lastKnownForWeek = prevWeightWeek
-        let headersMap = [1: "Pz", 2: "Pt", 3: "Sa", 4: "Ça", 5: "Pe", 6: "Cu", 7: "Ct"]
         
         for i in (0..<7).reversed() {
             let targetDate = calendar.date(byAdding: .day, value: -i, to: date)!
@@ -219,7 +219,7 @@ struct CalendarProvider: TimelineProvider {
             
             let isToday = (i == 0)
             let wd = calendar.component(.weekday, from: targetDate)
-            weeklyHeaders.append(headersMap[wd] ?? "")
+            weeklyHeaders.append(shortSymbols[wd - 1])
             weeklyRow.append(CalendarDay(day: dayNum, weight: weight, trend: trend, isToday: isToday, isFuture: false))
         }
         
@@ -356,16 +356,16 @@ struct SummaryWidgetEntryView: View {
             // Header
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(family == .systemLarge ? entry.monthTitle : "Son 7 Gün")
+                    Text(family == .systemLarge ? entry.monthTitle : "Last 7 Days")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(primaryTextColor)
                     if family == .systemLarge {
                         HStack(spacing: 8) {
-                            Label("\(entry.entryCount) kayıt", systemImage: "scalemass")
+                            Label("\(entry.entryCount) records", systemImage: "scalemass")
                                 .font(.system(size: 10))
                                 .foregroundColor(secondaryTextColor)
                             if let latest = entry.latestWeight {
-                                Text(String(format: "Son: %.1f %@", latest, entry.unit))
+                                Text(String(format: "Latest: %.1f %@", latest, entry.unit))
                                     .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(accentColor)
                             }
@@ -410,9 +410,9 @@ struct SummaryWidgetEntryView: View {
                 // Legend (large only)
                 Spacer(minLength: 4)
                 HStack(spacing: 12) {
-                    legendItem(color: Color(red: 0.2, green: 0.78, blue: 0.4), label: "Düşüş")
-                    legendItem(color: Color(red: 0.95, green: 0.3, blue: 0.3), label: "Artış")
-                    legendItem(color: .gray, label: "Aynı")
+                    legendItem(color: Color(red: 0.2, green: 0.78, blue: 0.4), label: "Decrease")
+                    legendItem(color: Color(red: 0.95, green: 0.3, blue: 0.3), label: "Increase")
+                    legendItem(color: .gray, label: "Same")
                     if entry.goalWeight > 0 {
                         HStack(spacing: 3) {
                             Image(systemName: "flag.fill")
@@ -480,9 +480,121 @@ struct summaryWidget: Widget {
                     .background(WidgetBackgroundView())
             }
         }
-        .configurationDisplayName("Kilo Takvimi")
-        .description("Aylık kilo kayıtlarınızı takvim görünümünde takip edin.")
+        .configurationDisplayName("Weight Calendar")
+        .description("Track your monthly weight records in a calendar view.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    }
+}
+
+// MARK: - Overview Widget Entry View
+
+struct OverviewWidgetEntryView: View {
+    var entry: CalendarProvider.Entry
+    @Environment(\.colorScheme) var colorScheme
+    
+    private var primaryTextColor: Color { colorScheme == .dark ? .white : .black }
+    private var secondaryTextColor: Color { colorScheme == .dark ? Color.white.opacity(0.6) : Color.black.opacity(0.6) }
+    private var accentColor: Color { colorScheme == .dark ? Color(red: 0.6, green: 0.55, blue: 1.0) : Color(red: 0.4, green: 0.33, blue: 0.96) }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Header
+            HStack(spacing: 6) {
+                ZStack {
+                    Circle()
+                        .fill(accentColor.opacity(0.2))
+                        .frame(width: 24, height: 24)
+                    Image(systemName: "scalemass.fill")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(accentColor)
+                }
+                Text("SUMMARY")
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundColor(accentColor)
+                Spacer()
+            }
+            
+            Spacer(minLength: 4)
+            
+            if let latest = entry.latestWeight {
+                // Latest Weight
+                VStack(alignment: .leading, spacing: -2) {
+                    Text("Current Weight")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(secondaryTextColor)
+                    
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Text(String(format: "%.1f", latest))
+                            .font(.system(size: 32, weight: .black, design: .rounded))
+                            .foregroundColor(primaryTextColor)
+                            .minimumScaleFactor(0.8)
+                        Text(entry.unit)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(secondaryTextColor)
+                    }
+                }
+                
+                Spacer(minLength: 4)
+                
+                // Goal
+                if entry.goalWeight > 0 {
+                    let diff = latest - entry.goalWeight
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "flag.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(accentColor)
+                            Text(String(format: "%.1f %@", entry.goalWeight, entry.unit))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(primaryTextColor)
+                        }
+                        
+                        if diff > 0 {
+                            Text(String(format: "Left: %.1f %@", diff, entry.unit))
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(Color(red: 0.95, green: 0.3, blue: 0.3))
+                        } else if diff < 0 {
+                            Text(String(format: "Diff: %.1f %@", abs(diff), entry.unit))
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(Color(red: 0.2, green: 0.78, blue: 0.4))
+                        } else {
+                            Text("Goal reached!")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(Color(red: 0.2, green: 0.78, blue: 0.4))
+                        }
+                    }
+                }
+            } else {
+                Text("No records found")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(secondaryTextColor)
+            }
+        }
+        .padding(12)
+    }
+}
+
+// MARK: - Overview Widget Definition
+
+struct OverviewWidget: Widget {
+    let kind: String = "overviewWidget"
+    
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: CalendarProvider()) { entry in
+            if #available(iOS 17.0, *) {
+                OverviewWidgetEntryView(entry: entry)
+                    .containerBackground(for: .widget) {
+                        WidgetBackgroundView()
+                    }
+            } else {
+                OverviewWidgetEntryView(entry: entry)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(WidgetBackgroundView())
+            }
+        }
+        .configurationDisplayName("Weight Summary")
+        .description("See your current weight and remaining goal.")
+        .supportedFamilies([.systemSmall])
     }
 }
 
@@ -492,10 +604,10 @@ struct summaryWidget_Previews: PreviewProvider {
     static var previews: some View {
         let entry = WeightCalendarEntry(
             date: Date(),
-            monthTitle: "Temmuz 2026",
-            weekdayHeaders: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
+            monthTitle: "July 2026",
+            weekdayHeaders: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             calendarRows: [],
-            weeklyHeaders: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
+            weeklyHeaders: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             weeklyRow: [],
             unit: "kg",
             latestWeight: 78.5,
@@ -508,5 +620,8 @@ struct summaryWidget_Previews: PreviewProvider {
             .previewContext(WidgetPreviewContext(family: .systemMedium))
         SummaryWidgetEntryView(entry: entry)
             .previewContext(WidgetPreviewContext(family: .systemLarge))
+        
+        OverviewWidgetEntryView(entry: entry)
+            .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }

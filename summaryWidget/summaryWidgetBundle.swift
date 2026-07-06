@@ -12,5 +12,6 @@ import SwiftUI
 struct summaryWidgetBundle: WidgetBundle {
     var body: some Widget {
         summaryWidget()
+        OverviewWidget()
     }
 }
