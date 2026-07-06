@@ -40,6 +40,8 @@ struct WeightCalendarEntry: TimelineEntry {
     let monthTitle: String
     let weekdayHeaders: [String]
     let calendarRows: [[CalendarDay]]
+    let weeklyHeaders: [String]
+    let weeklyRow: [CalendarDay]
     let unit: String
     let latestWeight: Double?
     let goalWeight: Double
@@ -172,11 +174,60 @@ struct CalendarProvider: TimelineProvider {
             rows.append(Array(allDays[i..<min(i + 7, allDays.count)]))
         }
         
+        // --- WEEKLY DATA FOR MEDIUM WIDGET ---
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd"
+        var weightByDateString: [String: Double] = [:]
+        for w in weights {
+            weightByDateString[df.string(from: w.date)] = w.weight
+        }
+        
+        var weeklyHeaders: [String] = []
+        var weeklyRow: [CalendarDay] = []
+        let todayStart = calendar.startOfDay(for: date)
+        
+        var prevWeightWeek: Double? = nil
+        for w in weights.reversed() {
+            if w.date < calendar.date(byAdding: .day, value: -6, to: todayStart)! {
+                prevWeightWeek = w.weight
+                break
+            }
+        }
+        
+        var lastKnownForWeek = prevWeightWeek
+        let headersMap = [1: "Pz", 2: "Pt", 3: "Sa", 4: "Ça", 5: "Pe", 6: "Cu", 7: "Ct"]
+        
+        for i in (0..<7).reversed() {
+            let targetDate = calendar.date(byAdding: .day, value: -i, to: date)!
+            let dayNum = calendar.component(.day, from: targetDate)
+            let dateStr = df.string(from: targetDate)
+            let weight = weightByDateString[dateStr]
+            
+            var trend: TrendDirection = .none
+            if let w = weight {
+                if let prev = lastKnownForWeek {
+                    if w < prev { trend = .down }
+                    else if w > prev { trend = .up }
+                    else { trend = .same }
+                } else {
+                    trend = .first
+                }
+                lastKnownForWeek = w
+            }
+            
+            let isToday = (i == 0)
+            let wd = calendar.component(.weekday, from: targetDate)
+            weeklyHeaders.append(headersMap[wd] ?? "")
+            weeklyRow.append(CalendarDay(day: dayNum, weight: weight, trend: trend, isToday: isToday))
+        }
+        
         return WeightCalendarEntry(
             date: date,
             monthTitle: monthTitle,
             weekdayHeaders: weekdayHeaders,
             calendarRows: rows,
+            weeklyHeaders: weeklyHeaders,
+            weeklyRow: weeklyRow,
             unit: unit,
             latestWeight: weights.last?.weight,
             goalWeight: goalWeight,
@@ -255,7 +306,7 @@ struct SummaryWidgetEntryView: View {
             // Header
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(entry.monthTitle)
+                    Text(family == .systemLarge ? entry.monthTitle : "Son 7 Gün")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
                     if family == .systemLarge {
@@ -287,25 +338,26 @@ struct SummaryWidgetEntryView: View {
             
             // Weekday headers
             HStack(spacing: 0) {
-                ForEach(entry.weekdayHeaders, id: \.self) { symbol in
-                    Text(symbol)
+                let headers = family == .systemLarge ? entry.weekdayHeaders : entry.weeklyHeaders
+                ForEach(0..<headers.count, id: \.self) { i in
+                    Text(headers[i])
                         .font(.system(size: 9, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.5))
                         .frame(maxWidth: .infinity)
                 }
             }
             
-            // Calendar grid
-            ForEach(0..<entry.calendarRows.count, id: \.self) { rowIndex in
-                HStack(spacing: 0) {
-                    ForEach(entry.calendarRows[rowIndex]) { day in
-                        CalendarDayCellView(day: day, showWeight: family == .systemLarge)
+            if family == .systemLarge {
+                // Calendar grid
+                ForEach(0..<entry.calendarRows.count, id: \.self) { rowIndex in
+                    HStack(spacing: 0) {
+                        ForEach(entry.calendarRows[rowIndex]) { day in
+                            CalendarDayCellView(day: day, showWeight: true)
+                        }
                     }
                 }
-            }
-            
-            // Legend (large only)
-            if family == .systemLarge {
+                
+                // Legend (large only)
                 Spacer(minLength: 4)
                 HStack(spacing: 12) {
                     legendItem(color: Color(red: 0.2, green: 0.78, blue: 0.4), label: "Düşüş")
@@ -322,6 +374,15 @@ struct SummaryWidgetEntryView: View {
                         }
                     }
                 }
+            } else {
+                // Medium widget row (1 week)
+                Spacer(minLength: 8)
+                HStack(spacing: 0) {
+                    ForEach(entry.weeklyRow) { day in
+                        CalendarDayCellView(day: day, showWeight: true)
+                    }
+                }
+                Spacer(minLength: 4)
             }
         }
         .padding(12)
@@ -370,6 +431,8 @@ struct summaryWidget_Previews: PreviewProvider {
             monthTitle: "Temmuz 2026",
             weekdayHeaders: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
             calendarRows: [],
+            weeklyHeaders: ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"],
+            weeklyRow: [],
             unit: "kg",
             latestWeight: 78.5,
             goalWeight: 72.0,
